@@ -1,9 +1,10 @@
 # TODO
 
-- [ ] Domein-namen & subdomein
+- [X] Domein-namen & subdomein
 - [ ] Importeren in Spotify
+- [ ] Remove default url
 
-- [ ] Favicon
+- [X] Favicon
 - [ ] Analytics
 - [X] index.html
 - [ ] Nederlandse error teksten
