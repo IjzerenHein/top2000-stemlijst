@@ -8,8 +8,6 @@ export default () => {
   const [text, setText] = React.useState("");
   const [error, setError] = React.useState("");
 
-  console.log("TEXT: ", text);
-
   return (
     <View style={styles.container}>
       <TextInput
@@ -20,7 +18,7 @@ export default () => {
       />
       <Button
         icon="plus"
-        mode="outlined"
+        mode="contained"
         disabled={!text}
         onPress={() => {
           try {
