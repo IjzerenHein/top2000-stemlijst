@@ -1,9 +1,12 @@
-import { observable } from "mobx";
+import { observable, computed, decorate } from "mobx";
 
 import { runInAction } from "mobx";
 import { Song } from "./Song";
 import { Source } from "./Source";
 import type { SourceData } from "./types";
+
+// const ORIGIN = "https://us-central1-spotify-import-957dd.cloudfunctions.net";
+const ORIGIN = "http://localhost:5001/spotify-import-957dd/us-central1";
 
 type ImportStatus = {
   isLoading: boolean;
@@ -18,9 +21,7 @@ export class Store {
 
   async addSourceFromURL(url: string) {
     const response = await fetch(
-      `https://us-central1-spotify-import-957dd.cloudfunctions.net/importUrl?url=${encodeURIComponent(
-        url
-      )}`
+      `${ORIGIN}/importUrl?url=${encodeURIComponent(url)}`
     );
     const json: any = await response.json();
     if (json.error) {
@@ -37,7 +38,9 @@ export class Store {
   }
 
   get songs(): Song[] {
-    return this.mutableSources.flatMap((source) => source.songs);
+    return this.mutableSources.flatMap((source) =>
+      source.songs.filter((song) => song.isSelected)
+    );
   }
 
   import() {
@@ -53,3 +56,5 @@ export class Store {
     return this.mutableImportStatus.get();
   }
 }
+
+decorate(Store, { songs: computed });

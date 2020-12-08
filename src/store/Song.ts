@@ -6,29 +6,21 @@ export class Song {
   public readonly title: string;
   public readonly artist: string;
   public readonly imageUrl?: string;
-  private mutableSpotifyId: IObservableValue<string>;
+  public readonly spotifyUri?: string;
+  private mutableIsSelected: IObservableValue<boolean>;
 
   constructor(data: SongData) {
     this.title = data.title;
     this.artist = data.artist;
     this.imageUrl = data.imageUrl;
-    this.mutableSpotifyId = observable.box(data.spotifyId || "");
-    /* if (!config.spotifyId) {
-      this.fetchSpotifyId();
-    }*/
+    this.spotifyUri = data.spotifyUri;
+    this.mutableIsSelected = observable.box(!!data.spotifyUri);
   }
 
-  get spotifyId(): string {
-    return this.mutableSpotifyId.get();
+  get isSelected(): boolean {
+    return this.mutableIsSelected.get();
   }
-
-  /* private async fetchSpotifyId() {
-    const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(this.title + ' ' + this.artist)}&type='track`, {
-        headers: {
-
-        }
-    });
-
-
-  }*/
+  set isSelected(value: boolean) {
+    this.mutableIsSelected.set(value);
+  }
 }

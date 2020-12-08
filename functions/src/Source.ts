@@ -1,4 +1,5 @@
 import type { Song } from "./Song";
+import { getSpotifyTrackUri } from "./spotify";
 
 export type PartialSourceData<T = any> = {
   name?: string;
@@ -35,6 +36,26 @@ export class Source<T = any> {
     this._data = {
       ...this._data,
       ...newData,
+    };
+  }
+
+  async resolveSpotifySongs() {
+    const songs = await Promise.all(
+      this._data.songs.map(async (song) => {
+        try {
+          const spotifyUri = await getSpotifyTrackUri(song.title, song.artist);
+          return {
+            ...song,
+            spotifyUri,
+          };
+        } catch (err) {
+          return song;
+        }
+      })
+    );
+    this._data = {
+      ...this._data,
+      songs,
     };
   }
 }

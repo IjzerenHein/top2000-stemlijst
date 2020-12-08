@@ -2,7 +2,7 @@ export type SongData = {
   title: string;
   artist: string;
   imageUrl?: string;
-  spotifyId?: string;
+  spotifyUri?: string;
 };
 
 export type SourceData = {

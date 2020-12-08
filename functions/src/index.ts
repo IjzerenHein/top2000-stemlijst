@@ -30,7 +30,7 @@ export const importUrl = functions.https.onRequest(
         throw new ArgumentError("No provider found");
       }
       await source.fetch();
-      // await source.resolveSpotifyIds();
+      await source.resolveSpotifySongs();
     } catch (err) {
       error = err;
     }
