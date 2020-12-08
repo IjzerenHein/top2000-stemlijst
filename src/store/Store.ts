@@ -5,8 +5,8 @@ import { Song } from "./Song";
 import { Source } from "./Source";
 import type { SourceData } from "./types";
 
-// const ORIGIN = "https://us-central1-spotify-import-957dd.cloudfunctions.net";
-const ORIGIN = "http://localhost:5001/spotify-import-957dd/us-central1";
+const ORIGIN = "https://us-central1-spotify-import-957dd.cloudfunctions.net";
+// const ORIGIN = "http://localhost:5001/spotify-import-957dd/us-central1";
 
 type ImportStatus = {
   isLoading: boolean;
