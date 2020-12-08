@@ -27,7 +27,7 @@ export const importUrl = functions.https.onRequest(
     try {
       source = getSourceFromURL(url as string);
       if (!source) {
-        throw new ArgumentError("No provider found");
+        throw new ArgumentError("Link word niet herkend");
       }
       await source.fetch();
       await source.resolveSpotifySongs();

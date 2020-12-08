@@ -22,7 +22,6 @@ export function getSourceFromURL(url: string): Source | null {
       );
       const text = await response.text();
       const json = JSON.parse(text);
-      // const json = require("./sampleData.json");
       const { name, shortlist } = json;
       // @ts-ignore
       const songs: Song[] = shortlist.map((item) => {

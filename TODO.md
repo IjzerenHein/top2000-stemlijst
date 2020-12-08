@@ -1,13 +1,16 @@
 # TODO
 
 - [X] Domein-namen & subdomein
-- [ ] Importeren in Spotify
-- [ ] Remove default url
-
+- [X] Remove default url
 - [X] Favicon
-- [ ] Analytics
 - [X] index.html
-- [ ] Nederlandse error teksten
+- [X] Nederlandse error teksten
+
+- [ ] Importeren in Spotify
+
+- [ ] Analytics
+- [ ] Engels / nederlands 
 - [ ] Reclame
 - [ ] Custom origin for local development
 - [ ] Spotify client id/secret for local development
+- [ ] Add server logging
