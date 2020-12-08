@@ -1,8 +1,11 @@
 import * as functions from "firebase-functions";
+import * as cors from "cors";
 
 import { getSourceFromURL } from "./sources";
 import type { Source } from "./Source";
 import { ArgumentError } from "./errors";
+
+const corsMiddleware = cors({ origin: true });
 
 /**
  * 1. Find source
@@ -12,6 +15,10 @@ import { ArgumentError } from "./errors";
  */
 export const importUrl = functions.https.onRequest(
   async (request, response) => {
+    corsMiddleware(request, response, () => {
+      /* nop */
+    });
+
     const url = request.query?.url;
     functions.logger.info("importUrl", { url });
 
