@@ -8,29 +8,56 @@ import type { SourceData } from "./types";
 const ORIGIN = "https://us-central1-spotify-import-957dd.cloudfunctions.net";
 // const ORIGIN = "http://localhost:5001/spotify-import-957dd/us-central1";
 
-type ImportStatus = {
+type Status = {
   isLoading: boolean;
   error?: Error;
 };
 
 export class Store {
   private mutableSources = observable<Source>([]);
-  private mutableImportStatus = observable.box<ImportStatus>({
+  private mutableAddSourceStatus = observable.box<Status>({
+    isLoading: false,
+  });
+  private mutableImportStatus = observable.box<Status>({
     isLoading: false,
   });
 
-  async addSourceFromURL(url: string) {
-    const response = await fetch(
-      `${ORIGIN}/importUrl?url=${encodeURIComponent(url)}`
-    );
-    const json: any = await response.json();
-    if (json.error) {
-      throw new Error(json.error);
+  async addSource(url: string) {
+    runInAction(() => {
+      this.mutableAddSourceStatus.set({
+        isLoading: true,
+        error: undefined,
+      });
+    });
+    try {
+      const response = await fetch(
+        `${ORIGIN}/importUrl?url=${encodeURIComponent(url)}`
+      );
+      const json: any = await response.json();
+      if (json.error) {
+        throw new Error(json.error);
+      }
+      const sourceData: SourceData = json;
+      const source = new Source(sourceData);
+      runInAction(() => {
+        this.mutableSources.push(source);
+        this.mutableAddSourceStatus.set({
+          isLoading: false,
+        });
+      });
+      return source;
+    } catch (error) {
+      runInAction(() => {
+        this.mutableAddSourceStatus.set({
+          isLoading: false,
+          error,
+        });
+      });
     }
-    const sourceData: SourceData = json;
-    const source = new Source(sourceData);
-    runInAction(() => this.mutableSources.push(source));
-    return source;
+  }
+
+  get addSourceStatus(): Status {
+    return this.mutableAddSourceStatus.get();
   }
 
   get sources(): Source[] {
@@ -52,7 +79,7 @@ export class Store {
     });
   }
 
-  get importStatus(): ImportStatus {
+  get importStatus(): Status {
     return this.mutableImportStatus.get();
   }
 }

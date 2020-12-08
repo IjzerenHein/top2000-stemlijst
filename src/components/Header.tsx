@@ -11,7 +11,10 @@ export default () => {
             "https://images4.persgroep.net/rcs/-9DviUQUw27j0AkMm_CUQjRXtu8/diocontent/162917285/_fitwidth/128/?appId=21791a8992982cd8da851550a453bd7f&quality=0.9",
         }}
       />
-      <Text style={styles.text}>{"➡️"}</Text>
+      <Image
+        style={styles.arrowImage}
+        source={require("../../assets/arrow-right.png")}
+      />
       <Image
         style={styles.spotifyImage}
         source={require("../../assets/spotify-green.png")}
@@ -31,6 +34,12 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     resizeMode: "contain",
+  },
+  arrowImage: {
+    width: 80,
+    height: 80,
+    resizeMode: "contain",
+    marginHorizontal: 20,
   },
   text: {
     fontSize: 30,

@@ -1,21 +1,16 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { observer } from "mobx-react";
+import { Button, TextInput, HelperText, Headline } from "react-native-paper";
+
 import { Colors } from "../theme";
-import {
-  Button,
-  TextInput,
-  Snackbar,
-  Portal,
-  Headline,
-} from "react-native-paper";
 import { store } from "../store";
 
-export default () => {
+export default observer(() => {
+  const { isLoading, error } = store.addSourceStatus;
   const [text, setText] = React.useState(
     "https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53"
   );
-  const [error, setError] = React.useState("");
-
   return (
     <View>
       <Headline>
@@ -31,41 +26,23 @@ export default () => {
         placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
         onChangeText={setText}
       />
+      <HelperText type="error" visible={!!error}>
+        {error?.message}
+      </HelperText>
       <Button
         style={[styles.button, !text ? styles.invisibleButton : undefined]}
         mode={"contained"}
+        loading={isLoading}
         disabled={!text}
-        onPress={async () => {
-          try {
-            const source = await store.addSourceFromURL(text);
-            if (source) {
-              setText("");
-            } else {
-              setError("Invalid URL");
-            }
-          } catch (err) {
-            setError(err.message);
-          }
-        }}
+        onPress={() =>
+          store.addSource(text).then((source) => source && setText(""))
+        }
       >
-        Haal lijst op
+        {isLoading ? "Bezig met ophalen..." : "Haal lijst op"}
       </Button>
-      <Portal>
-        <Snackbar
-          theme={{
-            colors: {
-              surface: Colors.red,
-            },
-          }}
-          visible={!!error}
-          onDismiss={() => setError("")}
-        >
-          {error}
-        </Snackbar>
-      </Portal>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   input: {
@@ -73,9 +50,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    marginBottom: 10,
-    // maxWidth: 400,
-    // alignSelf: "center",
+    marginVertical: 10,
   },
   invisibleButton: {
     opacity: 0,
