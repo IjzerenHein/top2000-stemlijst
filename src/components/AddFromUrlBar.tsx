@@ -9,7 +9,7 @@ import { store } from "../store";
 export default observer(() => {
   const { isLoading, error } = store.addSourceStatus;
   const [text, setText] = React.useState(
-    "https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53"
+    "" //"https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53"
   );
   return (
     <View>
