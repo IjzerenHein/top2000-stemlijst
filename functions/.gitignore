@@ -2,6 +2,10 @@
 **/*.js
 **/*.js.map
 
+# Logging
+firebase-debug.log
+ui-debug.log
+
 # Except the ESLint config file
 !.eslintrc.js
 
