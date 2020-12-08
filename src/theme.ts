@@ -8,4 +8,5 @@ export const Colors = {
   background: "#fff",
   panel: "#ccc",
   text: "#000",
+  error: "red",
 };

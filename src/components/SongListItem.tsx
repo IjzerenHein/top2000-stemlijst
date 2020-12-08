@@ -19,6 +19,6 @@ export default observer((props: { song: Song }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: 50,
+    // marginLeft: 50,
   },
 });

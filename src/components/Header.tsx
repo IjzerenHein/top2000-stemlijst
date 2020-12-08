@@ -1,0 +1,44 @@
+import React from "react";
+import { StyleSheet, Text, View, Image } from "react-native";
+
+export default () => {
+  return (
+    <View style={styles.container}>
+      <Image
+        style={styles.sourceImage}
+        source={{
+          uri:
+            "https://images4.persgroep.net/rcs/-9DviUQUw27j0AkMm_CUQjRXtu8/diocontent/162917285/_fitwidth/128/?appId=21791a8992982cd8da851550a453bd7f&quality=0.9",
+        }}
+      />
+      <Text style={styles.text}>{"➡️"}</Text>
+      <Image
+        style={styles.spotifyImage}
+        source={require("../../assets/spotify-green.png")}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  sourceImage: {
+    width: 120,
+    height: 120,
+    resizeMode: "contain",
+  },
+  text: {
+    fontSize: 30,
+    marginHorizontal: 40,
+  },
+  spotifyImage: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+  },
+});

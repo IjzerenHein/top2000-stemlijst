@@ -1,7 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { Colors } from "../theme";
-import { Button, TextInput, Snackbar, Portal } from "react-native-paper";
+import {
+  Button,
+  TextInput,
+  Snackbar,
+  Portal,
+  Headline,
+} from "react-native-paper";
 import { store } from "../store";
 
 export default () => {
@@ -9,50 +15,68 @@ export default () => {
   const [error, setError] = React.useState("");
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        label="Link"
-        value={text}
-        onChangeText={setText}
-      />
-      <Button
-        icon="plus"
-        mode="contained"
-        disabled={!text}
-        onPress={() => {
-          try {
-            const source = store.addSourceFromURL(text);
-            if (source) {
-              setText("");
-            } else {
-              setError("Invalid URL");
-            }
-          } catch (err) {
-            setError(err.message);
-          }
-        }}
-      >
-        Add
-      </Button>
-      <Portal>
-        <Snackbar visible={!!error} onDismiss={() => setError("")}>
-          {error}
-        </Snackbar>
-      </Portal>
+    <View>
+      <Headline>Vul hier jouw NPO Radio 2 Top-2000 stem link in</Headline>
+      <View style={styles.bar}>
+        <TextInput
+          style={styles.input}
+          mode="outlined"
+          // label="Vul jouw NPO Radio 2 Top-2000 stem link hier in."
+          value={text}
+          placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
+          onChangeText={setText}
+        />
+        {text && (
+          <Button
+            icon="plus"
+            mode="contained"
+            disabled={!text}
+            onPress={() => {
+              try {
+                const source = store.addSourceFromURL(text);
+                if (source) {
+                  setText("");
+                } else {
+                  setError("Invalid URL");
+                }
+              } catch (err) {
+                setError(err.message);
+              }
+            }}
+          >
+            Haal lijst op
+          </Button>
+        )}
+        <Portal>
+          <Snackbar
+            theme={{
+              colors: {
+                surface: Colors.error,
+              },
+            }}
+            visible={!!error}
+            onDismiss={() => setError("")}
+          >
+            {error}
+          </Snackbar>
+        </Portal>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  bar: {
     flexDirection: "row",
-    marginHorizontal: "10%",
     alignItems: "center",
+    marginBottom: 20,
   },
   input: {
     flex: 1,
     marginRight: 10,
   },
   button: {},
+  snackBar: {
+    backgroundColor: Colors.error,
+  },
 });

@@ -19,8 +19,10 @@ export default observer(function App() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        <View style={styles.content}>
-          <Content />
+        <View style={styles.content1}>
+          <View style={styles.content2}>
+            <Content />
+          </View>
         </View>
         <View style={styles.footer}>
           <Footer />
@@ -37,8 +39,15 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
   },
-  content: {
+  content1: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  content2: {
+    flex: 1,
+    maxWidth: 1200,
+    marginHorizontal: 20,
   },
   footer: {
     height: 100,

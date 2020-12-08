@@ -12,7 +12,7 @@ export default observer(() => {
       <Button
         disabled={!songs.length}
         mode="contained"
-      >{`Import ${songs.length} Songs to Spotify`}</Button>
+      >{`Importeer ${songs.length} Songs naar Spotify`}</Button>
     </View>
   );
 });

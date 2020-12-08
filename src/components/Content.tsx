@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { store } from "../store";
-import { Colors } from "../theme";
 import { observer } from "mobx-react";
+import Header from "./Header";
 import AddFromUrlBar from "./AddFromUrlBar";
 import SongList from "./SongList";
 
@@ -14,12 +14,11 @@ export default observer(() => {
         store.sources.length ? styles.containerWithSources : undefined,
       ]}
     >
-      <View style={styles.urlBar}>
-        <AddFromUrlBar />
-      </View>
+      <Header />
       {store.sources.map((source, index) => (
         <SongList key={index} source={source} />
       ))}
+      <AddFromUrlBar />
     </View>
   );
 });
@@ -33,8 +32,5 @@ const styles = StyleSheet.create({
   containerWithSources: {
     overflowY: "scroll",
     justifyContent: "flex-start",
-  },
-  urlBar: {
-    marginHorizontal: "10%",
   },
 });
