@@ -1,41 +1,25 @@
-import {
-  IObservableArray,
-  IObservableValue,
-  observable,
-  runInAction,
-} from "mobx";
+import { IObservableArray, IObservableValue, observable } from "mobx";
+
 import { Song } from "./Song";
+import type { SourceData } from "./types";
 
-type SourceStatus = {
-  isLoading?: boolean;
-  error?: Error;
-};
-
-export abstract class Source<Fields = any> {
-  protected readonly fields: Fields;
+export class Source {
+  public readonly url: string;
+  public readonly name: string;
+  public readonly imageUrl?: string;
   private mutableTitle: IObservableValue<string>;
   private mutableDescription: IObservableValue<string>;
-  private mutableImageUrl: IObservableValue<string>;
   private mutableSongs: IObservableArray<Song>;
-  private mutableStatus: IObservableValue<SourceStatus>;
-  private isInitialFetch: boolean = true;
 
-  constructor(config: {
-    title: string;
-    description: string;
-    imageUrl: string;
-    fields: Fields;
-  }) {
-    this.fields = config.fields;
-    this.mutableTitle = observable.box(config.title);
-    this.mutableDescription = observable.box(config.description);
-    this.mutableImageUrl = observable.box(config.imageUrl);
-    this.mutableSongs = observable<Song>([]);
-    this.mutableStatus = observable.box<SourceStatus>({
-      isLoading: true,
-      error: undefined,
-    });
-    this.fetch();
+  constructor(data: SourceData) {
+    this.url = data.url;
+    this.name = data.name;
+    this.imageUrl = data.imageUrl;
+    this.mutableTitle = observable.box(data.title);
+    this.mutableDescription = observable.box(data.description);
+    this.mutableSongs = observable<Song>(
+      data.songs?.map((songData) => new Song(songData)) ?? []
+    );
   }
 
   get title(): string {
@@ -46,57 +30,7 @@ export abstract class Source<Fields = any> {
     return this.mutableDescription.get();
   }
 
-  get imageUrl(): string {
-    return this.mutableImageUrl.get();
-  }
-
   get songs(): Song[] {
     return this.mutableSongs.toJS();
-  }
-
-  get status(): SourceStatus {
-    return this.mutableStatus.get();
-  }
-
-  abstract fetch(): Promise<void>;
-
-  protected onStart() {
-    if (!this.isInitialFetch) {
-      runInAction(() => {
-        this.mutableSongs.replace([]);
-        this.mutableStatus.set({
-          isLoading: true,
-          error: undefined,
-        });
-      });
-    }
-    this.isInitialFetch = false;
-  }
-
-  protected onComplete(
-    songs: Song[],
-    options?: {
-      title?: string;
-    }
-  ) {
-    runInAction(() => {
-      this.mutableSongs.replace(songs);
-      this.mutableStatus.set({
-        isLoading: false,
-        error: undefined,
-      });
-      if (options?.title) {
-        this.mutableTitle.set(options.title);
-      }
-    });
-  }
-
-  protected onError(error: Error) {
-    runInAction(() => {
-      this.mutableStatus.set({
-        isLoading: false,
-        error,
-      });
-    });
   }
 }

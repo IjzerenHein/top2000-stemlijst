@@ -3,7 +3,7 @@ import { observable } from "mobx";
 import { runInAction } from "mobx";
 import { Song } from "./Song";
 import { Source } from "./Source";
-import { getSourceFromURL } from "./sources";
+import type { SourceData } from "./types";
 
 type ImportStatus = {
   isLoading: boolean;
@@ -16,11 +16,19 @@ export class Store {
     isLoading: false,
   });
 
-  addSourceFromURL(url: string) {
-    const source = getSourceFromURL(url);
-    if (source) {
-      runInAction(() => this.mutableSources.push(source));
+  async addSourceFromURL(url: string) {
+    const response = await fetch(
+      `https://us-central1-spotify-import-957dd.cloudfunctions.net/importUrl?url=${encodeURIComponent(
+        url
+      )}`
+    );
+    const json: any = await response.json();
+    if (json.error) {
+      throw new Error(json.error);
     }
+    const sourceData: SourceData = json;
+    const source = new Source(sourceData);
+    runInAction(() => this.mutableSources.push(source));
     return source;
   }
 

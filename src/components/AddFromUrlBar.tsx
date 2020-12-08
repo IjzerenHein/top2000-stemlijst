@@ -26,14 +26,14 @@ export default () => {
           placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
           onChangeText={setText}
         />
-        {text && (
+        {text ? (
           <Button
             icon="plus"
             mode="contained"
             disabled={!text}
-            onPress={() => {
+            onPress={async () => {
               try {
-                const source = store.addSourceFromURL(text);
+                const source = await store.addSourceFromURL(text);
                 if (source) {
                   setText("");
                 } else {
@@ -46,7 +46,7 @@ export default () => {
           >
             Haal lijst op
           </Button>
-        )}
+        ) : undefined}
         <Portal>
           <Snackbar
             theme={{
