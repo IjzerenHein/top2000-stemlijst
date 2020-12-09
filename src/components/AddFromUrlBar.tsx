@@ -21,12 +21,12 @@ export default observer(() => {
       <Heading>
         {store.sources.length
           ? "Voeg nog een stem link toe:"
-          : "Vul hier jouw Top-2000 stem link in:"}
+          : "Vul hier jouw Top 2000 stem link in:"}
       </Heading>
       <TextInput
         style={styles.input}
         mode="outlined"
-        // label="Vul jouw NPO Radio 2 Top-2000 stem link hier in."
+        // label="Vul jouw NPO Radio 2 Top 2000 stem link hier in."
         value={text}
         placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
         onChangeText={setText}

@@ -14,6 +14,7 @@ export default observer(function ImportScreen(props: { queryParams: any }) {
   const { isLoading, error, playlistUrl } = importStatus;
 
   React.useEffect(() => {
+    history.replaceState("", document.title, "/");
     store.continueImport(props.queryParams);
   }, []);
 
@@ -33,13 +34,13 @@ export default observer(function ImportScreen(props: { queryParams: any }) {
       <View style={styles.container}>
         <View style={styles.content}>
           <Header />
-          <Heading>{text}</Heading>
+          <Heading style={styles.text}>{text}</Heading>
           {playlistUrl ? (
             <Button
               style={styles.button}
               onPress={() => window.open(playlistUrl)}
             >
-              Open Spotify om hem te bekijken
+              Open afspeellijst in Spotify
             </Button>
           ) : undefined}
         </View>
@@ -61,6 +62,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    marginTop: 10,
+    marginTop: 20,
+  },
+  text: {
+    textAlign: "center",
   },
 });

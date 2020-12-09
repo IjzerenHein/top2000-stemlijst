@@ -13,7 +13,7 @@ export default (props: { isSelected: boolean; spotifyUri?: string }) => {
     )
   ) : (
     <View style={styles.errorContainer}>
-      <ErrorText visible label="Niet gevonden op Spotify" />
+      <ErrorText visible label="Niet gevonden" />
     </View>
   );
 };

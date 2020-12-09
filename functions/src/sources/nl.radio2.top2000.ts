@@ -2,7 +2,7 @@ import { Source } from "../Source";
 import { Song } from "../Song";
 import fetch from "node-fetch";
 
-const TITLE = "Radio 2 - Top 2000 Stemlijst";
+const TITLE = "Top 2000 Stemlijst";
 
 export function getSourceFromURL(url: string): Source | null {
   // eg. https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53
@@ -35,7 +35,7 @@ export function getSourceFromURL(url: string): Source | null {
       });
       return {
         songs,
-        title: `${TITLE} van ${name}`,
+        title: `${TITLE} van ${name} (${year})`,
       };
     },
     url,

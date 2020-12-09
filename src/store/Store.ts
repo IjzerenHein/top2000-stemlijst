@@ -151,16 +151,18 @@ export class Store {
 
       // Get user-id for which to create a playlist
       const userProfile = await getSpotifyUserProfile(access_token);
-      console.log("userProfile", userProfile);
+      // console.log("userProfile", userProfile);
 
       // Create playlist
+      const playlistName = sources[0].title;
       const playlist = await createSpotifyPlaylist(
         access_token,
         userProfile.id,
-        "New playlist",
+        playlistName,
         false
       );
-      console.log("playlist", playlist);
+      const playlistUrl = playlist.external_urls.spotify;
+      // console.log("playlist", playlist);
 
       // Add tracks to playlist
       await addSpotifyPlaylistTracks(
@@ -169,11 +171,19 @@ export class Store {
         docData.songs.map((song) => song.spotifyUri!)
       );
 
+      // Update url-bar
+      history.replaceState("", document.title, "/");
+
+      // Store import url
+      /* docRef.update({
+        spotifyUri: playlist.uri,
+      }); */
+
       // All done
       runInAction(() => {
         this.mutableImportStatus.set({
           isLoading: false,
-          playlistUrl: playlist.external_urls.spotify,
+          playlistUrl,
         });
       });
     } catch (error) {

@@ -9,6 +9,7 @@ export type SpotifyUserProfile = {
 // See full object at https://developer.spotify.com/documentation/web-api/reference/playlists/create-playlist/
 export type SpotifyPlaylist = {
   id: string;
+  uri: string;
   external_urls: {
     spotify: string;
   };
@@ -22,7 +23,8 @@ export function authorizeSpotify(importId: string, isPublicPlaylist: boolean) {
   const url = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${redirectUri}&state=${importId}&scope=${
     isPublicPlaylist ? "playlist-modify-private" : "playlist-modify-public"
   }`;
-  window.open(url);
+  // window.open(url);
+  window.location.href = url;
 }
 
 export async function spotifyFetch<T>(
