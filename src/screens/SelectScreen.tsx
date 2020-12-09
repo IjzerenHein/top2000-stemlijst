@@ -1,26 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Colors } from "./theme";
+import { StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
-import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
-import Content from "./components/Content";
-import Footer from "./components/Footer";
-import { store } from "./store";
+import { Provider as PaperProvider } from "react-native-paper";
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: Colors.green,
-    // accent: 'yellow',
-  },
-};
+import { Colors, PaperTheme } from "../theme";
+import Content from "../components/Content";
+import Footer from "../components/Footer";
+import { store } from "../store";
 
 const FOOTER_HEIGHT = 100;
 
-export default observer(function App() {
+export default observer(function SelectScreen() {
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={PaperTheme}>
       <View style={styles.container}>
         <View style={styles.content1}>
           <View

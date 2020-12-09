@@ -1,11 +1,13 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
-import { Button, TextInput, Headline } from "react-native-paper";
+import { TextInput } from "react-native-paper";
 
 import { Colors } from "../theme";
 import { store } from "../store";
 import { ErrorText } from "./ErrorText";
+import { Heading } from "./Heading";
+import { Button } from "./Button";
 
 export default observer(() => {
   const { isLoading, error } = store.addSourceStatus;
@@ -16,11 +18,11 @@ export default observer(() => {
   );
   return (
     <View>
-      <Headline>
+      <Heading>
         {store.sources.length
           ? "Voeg nog een stem link toe:"
           : "Vul hier jouw Top-2000 stem link in:"}
-      </Headline>
+      </Heading>
       <TextInput
         style={styles.input}
         mode="outlined"
@@ -32,7 +34,6 @@ export default observer(() => {
       <ErrorText visible={!!error} label={error?.message} />
       <Button
         style={[styles.button, !text ? styles.invisibleButton : undefined]}
-        mode={"contained"}
         loading={isLoading}
         disabled={!text}
         onPress={() =>

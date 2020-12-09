@@ -14,7 +14,9 @@ export class Song {
     this.artist = data.artist;
     this.imageUrl = data.imageUrl;
     this.spotifyUri = data.spotifyUri;
-    this.mutableIsSelected = observable.box(!!data.spotifyUri);
+    this.mutableIsSelected = observable.box(
+      data.isSelected ?? !!data.spotifyUri
+    );
   }
 
   get isSelected(): boolean {

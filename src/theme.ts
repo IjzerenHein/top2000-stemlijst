@@ -1,3 +1,5 @@
+import { DefaultTheme } from "react-native-paper";
+
 /* export const Colors = {
   background: "#000",
   panel: "#333",
@@ -11,4 +13,13 @@ export const Colors = {
   red: "#d2151b",
   green: "#1DB954",
   black: "#191414",
+};
+
+export const PaperTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: Colors.green,
+    // accent: 'yellow',
+  },
 };

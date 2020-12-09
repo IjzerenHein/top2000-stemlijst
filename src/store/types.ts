@@ -3,6 +3,7 @@ export type SongData = {
   artist: string;
   imageUrl?: string;
   spotifyUri?: string;
+  isSelected?: boolean;
 };
 
 export type SourceData = {

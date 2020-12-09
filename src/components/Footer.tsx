@@ -1,10 +1,9 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { store } from "../store";
-import { Colors } from "../theme";
 import { observer } from "mobx-react";
-import { Button } from "react-native-paper";
 import { ErrorText } from "./ErrorText";
+import { Button } from "./Button";
 
 export default observer(() => {
   const { songs, importStatus } = store;
@@ -13,7 +12,6 @@ export default observer(() => {
     <View style={styles.container}>
       <Button
         disabled={!songs.length}
-        mode="contained"
         loading={isLoading}
         onPress={() => store.import()}
       >{`Importeer ${songs.length} Songs naar Spotify`}</Button>

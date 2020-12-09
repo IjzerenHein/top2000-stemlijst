@@ -3,9 +3,14 @@ import { observable, computed, decorate } from "mobx";
 import { runInAction } from "mobx";
 import { Song } from "./Song";
 import { Source } from "./Source";
-import type { SourceData } from "./types";
+import type { SourceData, SongData } from "./types";
 import { firestore } from "../firebase";
-import { authorizeSpotify } from "../spotify";
+import {
+  authorizeSpotify,
+  getSpotifyUserProfile,
+  createSpotifyPlaylist,
+  addSpotifyPlaylistTracks,
+} from "../spotify";
 
 const ORIGIN =
   process.env.NODE_ENV === "development"
@@ -15,6 +20,7 @@ const ORIGIN =
 type Status = {
   isLoading: boolean;
   error?: Error;
+  playlistUrl?: string;
 };
 
 export class Store {
@@ -82,8 +88,8 @@ export class Store {
   }
 
   /**
-   * 1. Authenticate app with Spotify
-   * 2.
+   * 1. Stores the imported songs in Firestore
+   * 2. Redirects to Spotify to authorize the user
    */
   async import() {
     runInAction(() => {
@@ -96,6 +102,80 @@ export class Store {
       const data = this.toJSON();
       const { id } = await firestore.collection("imports").add(data);
       authorizeSpotify(id, true);
+    } catch (error) {
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          error,
+        });
+      });
+    }
+  }
+
+  /**
+   * 1. Loads the imports songs from Firestore
+   * 2. Gets user Id
+   * 3. Creates playlist
+   * 4. Adds tracks to playlist
+   * 5. Updates playlist url
+   */
+  async continueImport(queryParams: any) {
+    runInAction(() => {
+      this.mutableImportStatus.set({
+        isLoading: true,
+        error: undefined,
+      });
+    });
+    try {
+      const {
+        access_token,
+        state: importId,
+        /* token_type,
+        expires_in, */
+      } = queryParams;
+
+      // Re-initialize store with data
+      const docRef = firestore.collection("imports").doc(importId);
+      const doc = await docRef.get();
+      if (!doc.exists) {
+        throw new Error("Kan import data niet vinden");
+      }
+      const docData: {
+        sources: SourceData[];
+        songs: SongData[];
+      } = doc.data() as any;
+      const sources = docData.sources.map(
+        (sourceData) => new Source(sourceData)
+      );
+      runInAction(() => this.mutableSources.replace(sources));
+
+      // Get user-id for which to create a playlist
+      const userProfile = await getSpotifyUserProfile(access_token);
+      console.log("userProfile", userProfile);
+
+      // Create playlist
+      const playlist = await createSpotifyPlaylist(
+        access_token,
+        userProfile.id,
+        "New playlist",
+        false
+      );
+      console.log("playlist", playlist);
+
+      // Add tracks to playlist
+      await addSpotifyPlaylistTracks(
+        access_token,
+        playlist.id,
+        docData.songs.map((song) => song.spotifyUri!)
+      );
+
+      // All done
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          playlistUrl: playlist.external_urls.spotify,
+        });
+      });
     } catch (error) {
       runInAction(() => {
         this.mutableImportStatus.set({
