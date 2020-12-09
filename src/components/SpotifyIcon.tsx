@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Avatar, HelperText } from "react-native-paper";
+import { Avatar } from "react-native-paper";
+import { ErrorText } from "./ErrorText";
 
 export default (props: { isSelected: boolean; spotifyUri?: string }) => {
   const { isSelected, spotifyUri } = props;
@@ -12,9 +13,7 @@ export default (props: { isSelected: boolean; spotifyUri?: string }) => {
     )
   ) : (
     <View style={styles.errorContainer}>
-      <HelperText type="error" visible={true}>
-        Niet gevonden op Spotify
-      </HelperText>
+      <ErrorText visible label="Niet gevonden op Spotify" />
     </View>
   );
 };

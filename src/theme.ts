@@ -6,7 +6,7 @@
 
 export const Colors = {
   background: "#fff",
-  panel: "#191414",
+  panel: "#eee",
   text: "#000",
   red: "#d2151b",
   green: "#1DB954",

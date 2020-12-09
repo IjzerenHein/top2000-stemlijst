@@ -1,15 +1,18 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
-import { Button, TextInput, HelperText, Headline } from "react-native-paper";
+import { Button, TextInput, Headline } from "react-native-paper";
 
 import { Colors } from "../theme";
 import { store } from "../store";
+import { ErrorText } from "./ErrorText";
 
 export default observer(() => {
   const { isLoading, error } = store.addSourceStatus;
   const [text, setText] = React.useState(
-    "" //"https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53"
+    process.env.NODE_ENV === "development"
+      ? "https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53"
+      : ""
   );
   return (
     <View>
@@ -26,9 +29,7 @@ export default observer(() => {
         placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
         onChangeText={setText}
       />
-      <HelperText type="error" visible={!!error}>
-        {error?.message}
-      </HelperText>
+      <ErrorText visible={!!error} label={error?.message} />
       <Button
         style={[styles.button, !text ? styles.invisibleButton : undefined]}
         mode={"contained"}

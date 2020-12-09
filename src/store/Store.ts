@@ -4,6 +4,8 @@ import { runInAction } from "mobx";
 import { Song } from "./Song";
 import { Source } from "./Source";
 import type { SourceData } from "./types";
+import { firestore } from "../firebase";
+import { authorizeSpotify } from "../spotify";
 
 const ORIGIN =
   process.env.NODE_ENV === "development"
@@ -72,13 +74,36 @@ export class Store {
     );
   }
 
-  import() {
+  toJSON() {
+    return {
+      sources: this.mutableSources.map((source) => source.toJSON()),
+      songs: this.songs.map((song) => song.toJSON()),
+    };
+  }
+
+  /**
+   * 1. Authenticate app with Spotify
+   * 2.
+   */
+  async import() {
     runInAction(() => {
       this.mutableImportStatus.set({
         isLoading: true,
         error: undefined,
       });
     });
+    try {
+      const data = this.toJSON();
+      const { id } = await firestore.collection("imports").add(data);
+      authorizeSpotify(id, true);
+    } catch (error) {
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          error,
+        });
+      });
+    }
   }
 
   get importStatus(): Status {

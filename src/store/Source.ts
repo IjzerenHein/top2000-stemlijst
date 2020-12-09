@@ -33,4 +33,15 @@ export class Source {
   get songs(): Song[] {
     return this.mutableSongs.toJS();
   }
+
+  toJSON(): object {
+    return {
+      url: this.url,
+      name: this.name,
+      imageUrl: this.imageUrl || "",
+      title: this.title,
+      description: this.description,
+      songs: this.mutableSongs.map((song) => song.toJSON()),
+    };
+  }
 }

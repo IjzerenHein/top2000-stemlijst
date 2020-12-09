@@ -3,11 +3,13 @@
   "scripts": {
     "start": "expo start",
     "web": "expo start --web",
-    "build": "expo build:web"
+    "build": "expo build:web",
+    "deploy:firestore": "firebase deploy --only firestore"
   },
   "dependencies": {
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
+    "firebase": "^8.1.2",
     "mobx": "5",
     "mobx-react": "6",
     "react": "16.13.1",

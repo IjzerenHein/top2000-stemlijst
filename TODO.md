@@ -10,9 +10,9 @@
 
 - [ ] Importeren in Spotify
 
+- [ ] Zwarte balk onderkant
 - [ ] Analytics
 - [ ] Engels / nederlands 
 - [ ] Reclame
 - [ ] Add server logging
 - [ ] Auto deploy functies in CI
-- [ ] Zwarte balk onderkant

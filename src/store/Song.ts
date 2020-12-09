@@ -23,4 +23,14 @@ export class Song {
   set isSelected(value: boolean) {
     this.mutableIsSelected.set(value);
   }
+
+  toJSON() {
+    return {
+      title: this.title || "",
+      artist: this.artist || "",
+      imageUrl: this.imageUrl || "",
+      spotifyUri: this.spotifyUri || "",
+      isSelected: this.isSelected,
+    };
+  }
 }
