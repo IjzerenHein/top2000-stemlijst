@@ -1,18 +1,22 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Source } from "../store";
-import { Colors } from "../theme";
 import { observer } from "mobx-react";
 import { List, Headline, Caption } from "react-native-paper";
+
+import { Source } from "../store";
+import { Colors } from "../theme";
 import SongListItem from "./SongListItem";
-import SongImage from "./SongImage";
 
 export default observer((props: { source: Source }) => {
-  const { title, description, imageUrl, songs } = props.source;
+  const { title, description, songs, failedSongs } = props.source;
   return (
     <List.Section style={styles.container}>
       <Headline>{title}</Headline>
-      <Caption>{description}</Caption>
+      <Caption style={failedSongs.length ? styles.warning : undefined}>
+        {failedSongs.length
+          ? `${failedSongs.length} nummer(s) werden niet gevonden op Spotify`
+          : `${songs.length} nummer(s)`}
+      </Caption>
       {songs.map((song, index) => (
         <SongListItem key={index} song={song} />
       ))}
@@ -23,5 +27,8 @@ export default observer((props: { source: Source }) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
+  },
+  warning: {
+    color: Colors.yellow,
   },
 });

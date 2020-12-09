@@ -10,7 +10,8 @@ import { Heading } from "./Heading";
 import { Button } from "./Button";
 
 export default observer(() => {
-  const { isLoading, error } = store.addSourceStatus;
+  const { sources, addSourceStatus } = store;
+  const { isLoading, error } = addSourceStatus;
   const [text, setText] = React.useState(
     process.env.NODE_ENV === "development"
       ? "https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53"
@@ -20,12 +21,12 @@ export default observer(() => {
     <View>
       <Heading>
         {store.sources.length
-          ? "Voeg nog een stem link toe:"
+          ? "Voeg nog een stemlijst toe:"
           : "Vul hier jouw Top 2000 stem link in:"}
       </Heading>
       <TextInput
         style={styles.input}
-        mode="outlined"
+        mode={"outlined"}
         // label="Vul jouw NPO Radio 2 Top 2000 stem link hier in."
         value={text}
         placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
@@ -33,7 +34,11 @@ export default observer(() => {
       />
       <ErrorText visible={!!error} label={error?.message} />
       <Button
-        style={[styles.button, !text ? styles.invisibleButton : undefined]}
+        style={[
+          styles.button,
+          !text && !sources.length ? styles.invisibleButton : undefined,
+        ]}
+        mode={sources.length ? "outlined" : "contained"}
         loading={isLoading}
         disabled={!text}
         onPress={() =>

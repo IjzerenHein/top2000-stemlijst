@@ -4,9 +4,11 @@ import { observer } from "mobx-react";
 import { Provider as PaperProvider } from "react-native-paper";
 
 import { Colors, PaperTheme } from "../theme";
-import Content from "../components/Content";
-import Footer from "../components/Footer";
 import { store } from "../store";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import AddFromUrlBar from "../components/AddFromUrlBar";
+import SongList from "../components/SongList";
 
 const FOOTER_HEIGHT = 100;
 
@@ -14,20 +16,24 @@ export default observer(function SelectScreen() {
   return (
     <PaperProvider theme={PaperTheme}>
       <View style={styles.container}>
-        <View style={styles.content1}>
+        <View style={styles.scrollContainer}>
           <View
             style={[
-              styles.content2,
-              store.sources.length ? styles.contentFooterVisible : undefined,
+              styles.content,
+              store.sources.length ? styles.contentWithSources : undefined,
             ]}
           >
-            <Content />
+            <Header />
+            {store.sources.map((source, index) => (
+              <SongList key={index} source={source} />
+            ))}
+            <AddFromUrlBar />
           </View>
         </View>
         <View
           style={[
             styles.footer,
-            store.sources.length ? styles.footerVisible : undefined,
+            !store.sources.length ? styles.footerHidden : undefined,
           ]}
         >
           <Footer />
@@ -41,33 +47,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+    // @ts-ignore
+    overflowY: "hidden",
+  },
+  scrollContainer: {
+    flex: 1,
+    // @ts-ignore
+    overflowY: "auto",
+    paddingHorizontal: 20,
+  },
+  content: {
     flexDirection: "column",
     justifyContent: "center",
+    // @ts-ignore
+    transform: [{ translateY: "20vh" }],
+    maxWidth: 900,
+    width: "100%",
+    alignSelf: "center",
   },
-  content1: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  content2: {
-    flex: 1,
-    maxWidth: 800,
-    marginHorizontal: 20,
-  },
-  contentFooterVisible: {
-    marginBottom: FOOTER_HEIGHT,
+  contentWithSources: {
+    transform: [{ translateY: 0 }],
   },
   footer: {
+    height: FOOTER_HEIGHT,
+    backgroundColor: Colors.panel,
+    // @ts-ignore
+    transitionDuration: "0.4s",
+    transform: [{ translateY: 0 }],
+    overflow: "hidden",
+  },
+  footerHidden: {
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: -FOOTER_HEIGHT,
-    height: FOOTER_HEIGHT,
-    backgroundColor: Colors.panel,
-    transitionDuration: "0.4s",
-    transform: [{ translateY: 0 }],
-  },
-  footerVisible: {
-    transform: [{ translateY: -FOOTER_HEIGHT }],
+    bottom: 0,
+    transform: [{ translateY: FOOTER_HEIGHT }],
   },
 });

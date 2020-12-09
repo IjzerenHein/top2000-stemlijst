@@ -34,6 +34,10 @@ export class Source {
     return this.mutableSongs.toJS();
   }
 
+  get failedSongs(): Song[] {
+    return this.mutableSongs.filter((song) => !song.spotifyUri);
+  }
+
   toJSON(): object {
     return {
       url: this.url,
