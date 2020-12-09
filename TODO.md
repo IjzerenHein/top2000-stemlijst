@@ -12,8 +12,8 @@
 - [X] Mobile friendly
 - [X] Error meldingen server side  
 - [X] Server-side spotify id gebruiken top 2000 data
-
-- [ ] Zwarte balk onderkant
+- [X] Zwarte balk onderkant
+- 
 - [ ] Analytics
 
 - [ ] Public switch
@@ -22,3 +22,4 @@
 - [ ] Add server logging
 - [ ] Auto deploy functies in CI
 - [ ] Afbeelding afspeellijst Top 2000 logo?
+- [ ] Vul ontbrekende album image in met spotify data
