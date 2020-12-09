@@ -10,9 +10,9 @@
 - [X] Naam van playlist
 - [X] Voorkom dubbele import na submit
 - [X] Mobile friendly
+- [X] Error meldingen server side  
+- [X] Server-side spotify id gebruiken top 2000 data
 
-- [ ] Error meldingen server side  
-- [ ] Server-side spotify id gebruiken top 2000 data
 - [ ] Zwarte balk onderkant
 - [ ] Analytics
 

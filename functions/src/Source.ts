@@ -42,13 +42,19 @@ export class Source<T = any> {
   async resolveSpotifySongs() {
     const songs = await Promise.all(
       this._data.songs.map(async (song) => {
+        if (song.spotifyUri) {
+          // console.log("EXISTING URI: ", song.spotifyUri, song.title);
+          return song;
+        }
         try {
           const spotifyUri = await getSpotifyTrackUri(song.title, song.artist);
+          // console.log("FOUND URI: ", spotifyUri, song.title);
           return {
             ...song,
             spotifyUri,
           };
         } catch (err) {
+          // console.log("NOT FOUND URI: ", song.title, song.artist);
           return song;
         }
       })

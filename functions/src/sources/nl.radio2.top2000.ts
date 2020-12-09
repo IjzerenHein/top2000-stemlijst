@@ -20,17 +20,26 @@ export function getSourceFromURL(url: string): Source | null {
       const response = await fetch(
         `https://stem-backend.npo.nl/api/form/top2000-${year}/${id}`
       );
-      const text = await response.text();
-      const json = JSON.parse(text);
+      if (!response.ok) {
+        throw new Error(`Stemlijst niet gevonden (${response.status})`);
+      }
+      const json = await response.json();
       const { name, shortlist } = json;
       // @ts-ignore
       const songs: Song[] = shortlist.map((item) => {
         const { _source /* _id */ } = item;
-        const { image, title, artist /*, audio */ } = _source;
+        const { image, title, artist, audio } = _source;
+        // eg. https://stem-backend.npo.nl//storage/preview/827/spotify-407ltk0BtcZI8kgu0HH4Yj.mp3
+        const trackIdMatch = audio?.match(
+          /^https\:\/\/stem-backend.npo.nl(\/+)storage\/preview\/(\d+)\/spotify-([a-zA-Z0-9]+)\./
+        );
         return {
           title,
           artist,
           imageUrl: image,
+          ...(trackIdMatch
+            ? { spotifyUri: `spotify:track:${trackIdMatch[3]}` }
+            : {}),
         };
       });
       return {
