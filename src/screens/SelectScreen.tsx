@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import AddFromUrlBar from "../components/AddFromUrlBar";
 import SongList from "../components/SongList";
+import { License } from "../components/License";
 
 const FOOTER_HEIGHT = 100;
 
@@ -38,6 +39,7 @@ export default observer(function SelectScreen() {
         >
           <Footer />
         </View>
+        {!store.sources.length ? <License /> : undefined}
       </View>
     </PaperProvider>
   );
@@ -83,4 +85,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     transform: [{ translateY: FOOTER_HEIGHT }],
   },
+  licenseContainer: {},
 });

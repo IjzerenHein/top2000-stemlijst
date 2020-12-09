@@ -8,6 +8,7 @@ import { store } from "../store";
 import Header from "../components/Header";
 import { Heading } from "../components/Heading";
 import { Button } from "../components/Button";
+import { License } from "../components/License";
 
 export default observer(function ImportScreen(props: { queryParams: any }) {
   const { songs, importStatus } = store;
@@ -44,6 +45,7 @@ export default observer(function ImportScreen(props: { queryParams: any }) {
             </Button>
           ) : undefined}
         </View>
+        <License />
       </View>
     </PaperProvider>
   );
