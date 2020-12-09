@@ -5,6 +5,7 @@
 - [X] Favicon
 - [X] index.html
 - [X] Nederlandse error teksten
+- [X] Spotify client id/secret for local development
 
 - [ ] Importeren in Spotify
 
@@ -12,5 +13,6 @@
 - [ ] Engels / nederlands 
 - [ ] Reclame
 - [ ] Custom origin for local development
-- [ ] Spotify client id/secret for local development
 - [ ] Add server logging
+- [ ] Auto deploy functies in CI
+- [ ] Zwarte balk onderkant
