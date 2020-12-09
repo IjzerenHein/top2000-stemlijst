@@ -5,8 +5,10 @@ import { Song } from "./Song";
 import { Source } from "./Source";
 import type { SourceData } from "./types";
 
-const ORIGIN = "https://us-central1-spotify-import-957dd.cloudfunctions.net";
-// const ORIGIN = "http://localhost:5001/spotify-import-957dd/us-central1";
+const ORIGIN =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5001/spotify-import-957dd/us-central1"
+    : "https://us-central1-spotify-import-957dd.cloudfunctions.net";
 
 type Status = {
   isLoading: boolean;
