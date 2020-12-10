@@ -14,7 +14,11 @@
 - [X] Server-side spotify id gebruiken top 2000 data
 - [X] Zwarte balk onderkant
 - [X] Ondersteun 2019 stem links
-  
+- [X] Na inlog redirect checken voor errors
+- [X] License text ligt over inputtext op mobiel
+- [X] Delete/clear button
+- [/] Lege pagina na terugnavigeren inloggen
+
 - [ ] Analytics
     - [ ] import-start
     - [ ] import-completed
@@ -22,11 +26,7 @@
     - [ ] auth-failed
     - [ ] create-playlist
     - [ ] playlist-created
-- [ ] License text ligt over inputtext op mobiel
-- [ ] Lege pagina na terugnavigeren inloggen
-- [ ] Na inlog redirect checken voor errors
 - [ ] Voor inloggen naar App navigeren voor auth
-- [ ] Delete/clear button
 
 - [ ] Engels / nederlands 
 - [ ] Reclame

@@ -120,6 +120,24 @@ export class Store {
    * 5. Updates playlist url
    */
   async continueImport(queryParams: any) {
+    const {
+      access_token,
+      state: importId,
+      error,
+      /* token_type,
+      expires_in, */
+    } = queryParams;
+
+    if (error) {
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          error: new Error(`Spotify authorisatie mislukt (${error})`),
+        });
+      });
+      return;
+    }
+
     runInAction(() => {
       this.mutableImportStatus.set({
         isLoading: true,
@@ -127,13 +145,6 @@ export class Store {
       });
     });
     try {
-      const {
-        access_token,
-        state: importId,
-        /* token_type,
-        expires_in, */
-      } = queryParams;
-
       // Re-initialize store with data
       const docRef = firestore.collection("imports").doc(importId);
       const doc = await docRef.get();

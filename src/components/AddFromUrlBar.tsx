@@ -27,7 +27,7 @@ export default observer(() => {
       <TextInput
         style={styles.input}
         mode={"outlined"}
-        // label="Vul jouw NPO Radio 2 Top 2000 stem link hier in."
+        clearButtonMode={text ? "always" : "never"}
         value={text}
         placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
         onChangeText={setText}

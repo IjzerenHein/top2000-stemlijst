@@ -6,9 +6,9 @@ export function License() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
-        Gemaakt met <a href="https://www.expo.io">Expo</a> door{" "}
-        <a href="https://github.com/IjzerenHein">IjzerenHein</a>. Deze website
-        is niet gelieerd aan NPO Radio 2 of Spotify.
+        Deze website is niet gelieerd aan NPO Radio 2 en is mogelijk gemaakt
+        door <a href="https://github.com/IjzerenHein">IjzerenHein</a> en{" "}
+        <a href="https://www.expo.io">Expo</a>.
       </Text>
     </View>
   );
