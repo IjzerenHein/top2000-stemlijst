@@ -5,15 +5,31 @@ import fetch from "node-fetch";
 const TITLE = "Top 2000 Stemlijst";
 
 export function getSourceFromURL(url: string): Source | null {
+  const customFields: any = {};
+
   // eg. https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53
-  const match = url.match(
+  // or 2019 https://stem.nporadio2.nl/top-2000/share/e7e3efde0d8d6a92c0fccac24248325e84f137af
+  const matchWithYear = url.match(
     /^https\:\/\/stem.nporadio2.nl\/top2000-(\d+)\/share\/(.*)$/
   );
-  if (!match) return null;
+  if (!matchWithYear) {
+    const matchWithoutYear = url.match(
+      /^https\:\/\/stem.nporadio2.nl\/top-2000\/share\/(.*)$/
+    );
+    if (matchWithoutYear) {
+      customFields.year = 2019;
+      customFields.id = matchWithoutYear[1];
+    } else {
+      return null;
+    }
+  } else {
+    customFields.year = matchWithYear[1];
+    customFields.id = matchWithYear[1];
+  }
 
   return new Source<{
-    year: string;
     id: string;
+    year?: string;
   }>({
     fetch: async (data) => {
       const { year, id } = data.customFields;
@@ -53,10 +69,7 @@ export function getSourceFromURL(url: string): Source | null {
     description: url,
     imageUrl:
       "https://images4.persgroep.net/rcs/-9DviUQUw27j0AkMm_CUQjRXtu8/diocontent/162917285/_fitwidth/128/?appId=21791a8992982cd8da851550a453bd7f&quality=0.9",
-    customFields: {
-      year: match[1],
-      id: match[2],
-    },
+    customFields,
     songs: [],
   });
 }
