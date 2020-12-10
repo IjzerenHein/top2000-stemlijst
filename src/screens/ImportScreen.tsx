@@ -1,7 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
-import { Provider as PaperProvider, Headline } from "react-native-paper";
+import { Provider as PaperProvider } from "react-native-paper";
+import * as Linking from "expo-linking";
 
 import { Colors, PaperTheme } from "../theme";
 import { store } from "../store";
@@ -39,7 +40,7 @@ export default observer(function ImportScreen(props: { queryParams: any }) {
           {playlistUrl ? (
             <Button
               style={styles.button}
-              onPress={() => window.open(playlistUrl)}
+              onPress={() => Linking.openURL(playlistUrl)}
             >
               Open afspeellijst in Spotify
             </Button>

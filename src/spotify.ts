@@ -23,7 +23,6 @@ export function authorizeSpotify(importId: string, isPublicPlaylist: boolean) {
   const url = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${redirectUri}&state=${importId}&scope=${
     isPublicPlaylist ? "playlist-modify-private" : "playlist-modify-public"
   }`;
-  // window.open(url);
   window.location.href = url;
 }
 
