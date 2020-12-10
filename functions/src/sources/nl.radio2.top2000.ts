@@ -33,13 +33,18 @@ export function getSourceFromURL(url: string): Source | null {
   }>({
     fetch: async (data) => {
       const { year, id } = data.customFields;
-      const response = await fetch(
-        `https://stem-backend.npo.nl/api/form/top2000-${year}/${id}`
-      );
+      const backendUrl = `https://stem-backend.npo.nl/api/form/top2000-${year}/${id}`;
+      const response = await fetch(backendUrl);
       if (!response.ok) {
         throw new Error(`Stemlijst niet gevonden (${response.status})`);
       }
-      const json = await response.json();
+      const text = await response.text();
+      let json: any;
+      try {
+        json = JSON.parse(text);
+      } catch (error) {
+        throw new Error(`Stemlijst fout (${text})`);
+      }
       const { name, shortlist } = json;
       // @ts-ignore
       const songs: Song[] = shortlist.map((item) => {
