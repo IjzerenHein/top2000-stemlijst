@@ -24,7 +24,7 @@ export function getSourceFromURL(url: string): Source | null {
     }
   } else {
     customFields.year = matchWithYear[1];
-    customFields.id = matchWithYear[1];
+    customFields.id = matchWithYear[2];
   }
 
   return new Source<{
@@ -33,6 +33,7 @@ export function getSourceFromURL(url: string): Source | null {
   }>({
     fetch: async (data) => {
       const { year, id } = data.customFields;
+      // eg. https://stem-backend.npo.nl/api/form/top2000-2020/cc87893480d6ebf4741784b2b95ee3d411711b53
       const backendUrl = `https://stem-backend.npo.nl/api/form/top2000-${year}/${id}`;
       const response = await fetch(backendUrl);
       if (!response.ok) {
