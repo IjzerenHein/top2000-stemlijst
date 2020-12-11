@@ -15,7 +15,7 @@ export default observer(() => {
         disabled={!songs.length}
         loading={isLoading}
         onPress={() => store.saveAndAuthorizeForImport()}
-      >{`Importeer ${songs.length} Songs naar Spotify`}</Button>
+      >{`Importeer ${songs.length} songs naar Spotify`}</Button>
       <ErrorText visible={!!error} label={error?.message} />
     </View>
   );

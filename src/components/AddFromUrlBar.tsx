@@ -20,8 +20,8 @@ export default observer(() => {
     <View>
       <Heading>
         {store.sources.length
-          ? "Voeg nog een stemlijst toe:"
-          : "Importeer jouw Top 2000 stemlijst naar Spotify"}
+          ? "Voeg nog een Stemlijst toe:"
+          : "Importeer jouw Top 2000 Stemlijst naar Spotify"}
       </Heading>
       {!store.sources.length ? (
         <Caption>Vul de stemlink in die je via de email hebt ontvangen</Caption>

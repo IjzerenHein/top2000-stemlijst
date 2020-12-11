@@ -25,7 +25,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "name": "Top 2000 Stemlijst Spotify Import"
+      "name": "Top 2000 Stemlijst naar Spotify import"
     }
   }
 }

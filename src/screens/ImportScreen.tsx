@@ -25,7 +25,7 @@ export default observer(function ImportScreen(props: { queryParams: any }) {
   } else if (!songs.length) {
     text = "Bezig met laden...";
   } else if (isLoading) {
-    text = `Bezig met importeren van ${songs.length} Songs...`;
+    text = `Bezig met importeren van ${songs.length} songs...`;
   } else {
     text = "Jouw afspeellijst is aangemaakt!";
   }

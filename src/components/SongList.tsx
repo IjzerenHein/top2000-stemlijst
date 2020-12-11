@@ -14,8 +14,8 @@ export default observer((props: { source: Source }) => {
       <Headline>{title}</Headline>
       <Caption style={failedSongs.length ? styles.warning : undefined}>
         {failedSongs.length
-          ? `${failedSongs.length} nummer(s) werden niet gevonden op Spotify`
-          : `${songs.length} nummer(s)`}
+          ? `${failedSongs.length} song(s) werden niet gevonden op Spotify`
+          : `${songs.length} song(s)`}
       </Caption>
       {songs.map((song, index) => (
         <SongListItem key={index} song={song} />
