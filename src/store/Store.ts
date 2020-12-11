@@ -1,6 +1,7 @@
 import { observable, computed, decorate } from "mobx";
 import { runInAction } from "mobx";
 import * as Linking from "expo-linking";
+import uniqBy from "lodash.uniqby";
 
 import { Song } from "./Song";
 import { Source } from "./Source";
@@ -89,8 +90,11 @@ export class Store {
   }
 
   get songs(): Song[] {
-    return this.mutableSources.flatMap((source) =>
-      source.songs.filter((song) => song.isSelected)
+    return uniqBy(
+      this.mutableSources.flatMap((source) =>
+        source.songs.filter((song) => song.isSelected)
+      ),
+      (song) => song.spotifyUri
     );
   }
 
