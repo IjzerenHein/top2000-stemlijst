@@ -1,4 +1,5 @@
-const CLIENT_ID = "66fb733b0b4d409ba0b2f091b781ed6d";
+import * as config from "./config";
+
 const BASE_URL = "https://api.spotify.com/v1";
 
 export type SpotifyUserProfile = {
@@ -18,9 +19,11 @@ export type SpotifyPlaylist = {
 export function authorizeSpotify(importId: string, isPublicPlaylist: boolean) {
   const redirectUri =
     process.env.NODE_ENV === "development"
-      ? "http://localhost:19006/authorize"
-      : "https://www.spotify-import.com/authorize";
-  const url = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${redirectUri}&state=${importId}&scope=${
+      ? "http://localhost:19006/authorize-spotify-createplaylist"
+      : "https://top2000stemlijst.nl/authorize-spotify-createplaylist";
+  const url = `https://accounts.spotify.com/authorize?client_id=${
+    config.SPOTIFY_CLIENT_ID
+  }&response_type=token&redirect_uri=${redirectUri}&state=${importId}&scope=${
     isPublicPlaylist ? "playlist-modify-private" : "playlist-modify-public"
   }`;
   window.location.href = url;

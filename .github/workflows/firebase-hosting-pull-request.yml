@@ -22,7 +22,7 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SPOTIFY_IMPORT_957DD }}'
-          projectId: spotify-import-957dd
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOP2000_STEMLIJST }}'
+          projectId: top2000-stemlijst
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels

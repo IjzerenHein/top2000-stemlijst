@@ -14,8 +14,8 @@ import {
 
 const ORIGIN =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:5001/spotify-import-957dd/us-central1"
-    : "https://us-central1-spotify-import-957dd.cloudfunctions.net";
+    ? "http://localhost:5001/top2000-stemlijst/us-central1"
+    : "https://us-central1-top2000-stemlijst.cloudfunctions.net";
 
 type Status = {
   isLoading: boolean;

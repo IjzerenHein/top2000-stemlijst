@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "spotify-import",
-    "slug": "spotify-import",
+    "name": "top2000stemlijst",
+    "slug": "top2000stemlijst",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,7 +25,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "name": "Top 2000 Spotify Import"
+      "name": "Top 2000 Stemlijst Spotify Import"
     }
   }
 }

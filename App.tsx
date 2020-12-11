@@ -5,11 +5,14 @@ import SelectScreen from "./src/screens/SelectScreen";
 import ImportScreen from "./src/screens/ImportScreen";
 
 const { path, queryParams } = Linking.parse(
-  window.location.href.replace("/authorize#", "/authorize?")
+  window.location.href.replace(
+    "/authorize-spotify-createplaylist#",
+    "/authorize-spotify-createplaylist?"
+  )
 );
 
 export default () => {
-  return path === "authorize" ? (
+  return path === "authorize-spotify-createplaylist" ? (
     <ImportScreen queryParams={queryParams ?? {}} />
   ) : (
     <SelectScreen />

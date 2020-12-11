@@ -1,5 +1,5 @@
-# spotify-import
+# Top 2000 Stemlijst
 
-Import your songs easily into Spotify
+Importeer jouw Top 2000 stemlijst eenvoudig naar Spotify
 
 > This project was bootstrapped with [Expo](https://expo.io)
