@@ -25,7 +25,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "name": "Top 2000 Stemlijst naar Spotify import"
+      "name": "Top 2000 Stemlijst naar Spotify import",
+      "description": "Importeer jouw Top 2000 stemlijst eenvoudig naar Spotify",
+      "lang": "nl"
     }
   }
 }
