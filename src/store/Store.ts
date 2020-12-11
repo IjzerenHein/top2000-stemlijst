@@ -1,10 +1,12 @@
 import { observable, computed, decorate } from "mobx";
-
 import { runInAction } from "mobx";
+import * as Linking from "expo-linking";
+
 import { Song } from "./Song";
 import { Source } from "./Source";
 import type { SourceData, SongData } from "./types";
-import { firestore } from "../firebase";
+import { analytics, firestore } from "../firebase";
+
 import {
   authorizeSpotify,
   getSpotifyUserProfile,
@@ -55,8 +57,20 @@ export class Store {
           isLoading: false,
         });
       });
+      analytics.logEvent("import_url", {
+        url,
+        name: sourceData.name,
+        songs: sourceData.songs.length,
+        missingSongs: sourceData.songs.filter(
+          (songData) => !songData.spotifyUri
+        ).length,
+      });
       return source;
     } catch (error) {
+      analytics.logEvent("import_failure", {
+        url,
+        error: error.message,
+      });
       runInAction(() => {
         this.mutableAddSourceStatus.set({
           isLoading: false,
@@ -91,7 +105,7 @@ export class Store {
    * 1. Stores the imported songs in Firestore
    * 2. Redirects to Spotify to authorize the user
    */
-  async import() {
+  async saveAndAuthorizeForImport() {
     runInAction(() => {
       this.mutableImportStatus.set({
         isLoading: true,
@@ -101,8 +115,17 @@ export class Store {
     try {
       const data = this.toJSON();
       const { id } = await firestore.collection("imports").add(data);
+      analytics.logEvent("save_import", {
+        importId: id,
+        type: "spotify",
+        sources: data.sources.length,
+        songs: data.songs.length,
+      });
       authorizeSpotify(id, true);
     } catch (error) {
+      analytics.logEvent("save_failure", {
+        error: error.message,
+      });
       runInAction(() => {
         this.mutableImportStatus.set({
           isLoading: false,
@@ -119,7 +142,7 @@ export class Store {
    * 4. Adds tracks to playlist
    * 5. Updates playlist url
    */
-  async continueImport(queryParams: any) {
+  async importFromAuthorizationCallback(queryParams: any) {
     const {
       access_token,
       state: importId,
@@ -129,6 +152,11 @@ export class Store {
     } = queryParams;
 
     if (error) {
+      analytics.logEvent("authorize_failure", {
+        importId,
+        type: "spotify",
+        error,
+      });
       runInAction(() => {
         this.mutableImportStatus.set({
           isLoading: false,
@@ -190,6 +218,14 @@ export class Store {
         spotifyUri: playlist.uri,
       }); */
 
+      analytics.logEvent("create_playlist", {
+        importId,
+        type: "spotify",
+        public: false,
+        sources: docData.sources.length,
+        songs: docData.songs.length,
+      });
+
       // All done
       runInAction(() => {
         this.mutableImportStatus.set({
@@ -198,6 +234,11 @@ export class Store {
         });
       });
     } catch (error) {
+      analytics.logEvent("create_playlist_failure", {
+        importId,
+        type: "spotify",
+        error,
+      });
       runInAction(() => {
         this.mutableImportStatus.set({
           isLoading: false,
@@ -209,6 +250,19 @@ export class Store {
 
   get importStatus(): Status {
     return this.mutableImportStatus.get();
+  }
+
+  openPlaylist() {
+    const { playlistUrl } = this.importStatus;
+    if (!playlistUrl) {
+      return;
+    }
+
+    analytics.logEvent("open_playlist", {
+      type: "spotify",
+    });
+
+    Linking.openURL(playlistUrl);
   }
 }
 

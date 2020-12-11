@@ -18,16 +18,10 @@
 - [X] License text ligt over inputtext op mobiel
 - [X] Delete/clear button
 - [X] Lege pagina na terugnavigeren inloggen
+- [X] Betere instructie text
+- [X] Analytics
 
-- [ ] Analytics
-    - [ ] import-start
-    - [ ] import-completed
-    - [ ] import-failed
-    - [ ] auth-failed
-    - [ ] create-playlist
-    - [ ] playlist-created
 - [ ] Voor inloggen naar App navigeren voor auth
-
 - [ ] Engels / nederlands 
 - [ ] Reclame
 - [ ] Add server logging

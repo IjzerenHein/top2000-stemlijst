@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 import { Provider as PaperProvider } from "react-native-paper";
-import * as Linking from "expo-linking";
 
 import { Colors, PaperTheme } from "../theme";
 import { store } from "../store";
@@ -17,7 +16,7 @@ export default observer(function ImportScreen(props: { queryParams: any }) {
 
   React.useEffect(() => {
     history.replaceState("", document.title, "/");
-    store.continueImport(props.queryParams);
+    store.importFromAuthorizationCallback(props.queryParams);
   }, []);
 
   let text = "";
@@ -38,10 +37,7 @@ export default observer(function ImportScreen(props: { queryParams: any }) {
           <Header />
           <Heading style={styles.text}>{text}</Heading>
           {playlistUrl ? (
-            <Button
-              style={styles.button}
-              onPress={() => Linking.openURL(playlistUrl)}
-            >
+            <Button style={styles.button} onPress={() => store.openPlaylist()}>
               Open afspeellijst in Spotify
             </Button>
           ) : undefined}
