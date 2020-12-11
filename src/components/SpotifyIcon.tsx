@@ -1,7 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Avatar } from "react-native-paper";
-import { ErrorText } from "./ErrorText";
+
+import { ErrorText } from "./Text";
 
 export default (props: { isSelected: boolean; spotifyUri?: string }) => {
   const { isSelected, spotifyUri } = props;

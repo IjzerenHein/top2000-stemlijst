@@ -1,8 +1,9 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { store } from "../store";
 import { observer } from "mobx-react";
-import { ErrorText } from "./ErrorText";
+
+import { store } from "../store";
+import { ErrorText } from "./Text";
 import { Button } from "./Button";
 
 export default observer(() => {

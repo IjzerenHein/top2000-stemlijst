@@ -7,7 +7,7 @@ import * as Linking from "expo-linking";
 import { Colors, PaperTheme } from "../theme";
 import { store } from "../store";
 import Header from "../components/Header";
-import { Heading } from "../components/Heading";
+import { Heading } from "../components/Text";
 import { Button } from "../components/Button";
 import { License } from "../components/License";
 

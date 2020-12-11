@@ -5,8 +5,7 @@ import { TextInput } from "react-native-paper";
 
 import { Colors } from "../theme";
 import { store } from "../store";
-import { ErrorText } from "./ErrorText";
-import { Heading } from "./Heading";
+import { ErrorText, Heading, Caption } from "./Text";
 import { Button } from "./Button";
 
 export default observer(() => {
@@ -22,8 +21,13 @@ export default observer(() => {
       <Heading>
         {store.sources.length
           ? "Voeg nog een stemlijst toe:"
-          : "Vul hier jouw Top 2000 stem link in:"}
+          : "Importeer Top 2000 stemlijst naar Spotify"}
       </Heading>
+      {!store.sources.length ? (
+        <Caption>
+          Vul jouw stemlink in die je via de email hebt ontvangen
+        </Caption>
+      ) : undefined}
       <TextInput
         style={styles.input}
         mode={"outlined"}
