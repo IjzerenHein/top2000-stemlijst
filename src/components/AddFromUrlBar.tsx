@@ -21,12 +21,10 @@ export default observer(() => {
       <Heading>
         {store.sources.length
           ? "Voeg nog een stemlijst toe:"
-          : "Importeer Top 2000 stemlijst naar Spotify"}
+          : "Importeer jouw Top 2000 stemlijst naar Spotify"}
       </Heading>
       {!store.sources.length ? (
-        <Caption>
-          Vul jouw stemlink in die je via de email hebt ontvangen
-        </Caption>
+        <Caption>Vul de stemlink in die je via de email hebt ontvangen</Caption>
       ) : undefined}
       <TextInput
         style={styles.input}
