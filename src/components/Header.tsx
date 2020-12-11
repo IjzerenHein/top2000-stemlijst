@@ -6,10 +6,7 @@ export default () => {
     <View style={styles.container}>
       <Image
         style={styles.sourceImage}
-        source={{
-          uri:
-            "https://images4.persgroep.net/rcs/-9DviUQUw27j0AkMm_CUQjRXtu8/diocontent/162917285/_fitwidth/128/?appId=21791a8992982cd8da851550a453bd7f&quality=0.9",
-        }}
+        source={require("../../assets/logo.png")}
       />
       <Image
         style={styles.arrowImage}
@@ -46,8 +43,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 40,
   },
   spotifyImage: {
-    width: 100,
-    height: 100,
+    width: 96,
+    height: 96,
     resizeMode: "contain",
   },
 });
