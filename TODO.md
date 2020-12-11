@@ -17,7 +17,7 @@
 - [X] Na inlog redirect checken voor errors
 - [X] License text ligt over inputtext op mobiel
 - [X] Delete/clear button
-- [/] Lege pagina na terugnavigeren inloggen
+- [X] Lege pagina na terugnavigeren inloggen
 
 - [ ] Analytics
     - [ ] import-start
