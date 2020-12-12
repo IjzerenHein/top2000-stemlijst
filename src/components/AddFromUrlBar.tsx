@@ -7,10 +7,13 @@ import { Colors } from "../theme";
 import { store } from "../store";
 import { ErrorText, Heading, Caption } from "./Text";
 import { Button } from "./Button";
+import { t } from "../i18n";
+import { useMusicProvider } from "../providers";
 
 export default observer(() => {
   const { sources, addSourceStatus } = store;
   const { isLoading, error } = addSourceStatus;
+  const provider = useMusicProvider();
   const [text, setText] = React.useState(
     process.env.NODE_ENV === "development"
       ? "https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53"
@@ -20,18 +23,23 @@ export default observer(() => {
     <View>
       <Heading>
         {store.sources.length
-          ? "Voeg nog een Stemlijst toe:"
-          : "Importeer jouw Top 2000 Stemlijst naar Spotify"}
+          ? t("Voeg nog een Stemlijst toe:")
+          : t("Importeer jouw Top 2000 Stemlijst naar $1", provider.name)}
       </Heading>
       {!store.sources.length ? (
-        <Caption>Vul de stemlink in die je via de email hebt ontvangen</Caption>
+        <Caption>
+          {t("Vul de stemlink in die je via de email hebt ontvangen")}
+        </Caption>
       ) : undefined}
       <TextInput
         style={styles.input}
         mode={"outlined"}
         clearButtonMode={text ? "always" : "never"}
         value={text}
-        placeholder="https://stem.nporadio2.nl/top2000-2020/share/{Jouw persoonlijke stem id}"
+        placeholder={
+          "https://stem.nporadio2.nl/top2000-2020/share/" +
+          t("{Jouw persoonlijke stem id}")
+        }
         onChangeText={setText}
       />
       <ErrorText visible={!!error} label={error?.message} />
@@ -44,10 +52,12 @@ export default observer(() => {
         loading={isLoading}
         disabled={!text}
         onPress={() =>
-          store.addSource(text).then((source) => source && setText(""))
+          store
+            .addSource(text, provider)
+            .then((source) => source && setText(""))
         }
       >
-        {isLoading ? "Bezig met ophalen..." : "Haal lijst op"}
+        {isLoading ? t("Bezig met ophalen...") : t("Haal lijst op")}
       </Button>
     </View>
   );

@@ -21,6 +21,8 @@
 - [X] Betere instructie text
 - [X] Analytics
 
+
+- [ ] Add createdAt timestamp to imports
 - [ ] Voor inloggen naar App navigeren voor auth
 - [ ] Engels / nederlands 
 - [ ] Reclame

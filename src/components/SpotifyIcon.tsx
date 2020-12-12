@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Avatar } from "react-native-paper";
+import { t } from "../i18n";
 
 import { ErrorText } from "./Text";
 
@@ -14,7 +15,7 @@ export default (props: { isSelected: boolean; spotifyUri?: string }) => {
     )
   ) : (
     <View style={styles.errorContainer}>
-      <ErrorText visible label="Niet gevonden" />
+      <ErrorText visible label={t("Niet gevonden")} />
     </View>
   );
 };
