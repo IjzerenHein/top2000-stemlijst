@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import { Heading } from "../components/Text";
 import { Button } from "../components/Button";
 import { License } from "../components/License";
+import HomeButton from "../components/HomeButton";
 import { t } from "../i18n";
 import { useMusicProvider } from "../providers";
 
@@ -42,6 +43,7 @@ export default observer(function ImportScreen() {
           </Button>
         ) : undefined}
       </View>
+      {!isLoading ? <HomeButton /> : undefined}
       <License />
     </View>
   );

@@ -6,6 +6,7 @@ import { Colors } from "../theme";
 import { store } from "../store";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import HomeButton from "../components/HomeButton";
 import AddFromUrlBar from "../components/AddFromUrlBar";
 import SongList from "../components/SongList";
 
@@ -36,6 +37,7 @@ export default observer(function SelectScreen() {
       >
         <Footer />
       </View>
+      {!store.sources.length ? <HomeButton /> : undefined}
     </View>
   );
 });
