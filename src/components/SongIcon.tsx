@@ -5,9 +5,9 @@ import { t } from "../i18n";
 
 import { ErrorText } from "./Text";
 
-export default (props: { isSelected: boolean; spotifyUri?: string }) => {
-  const { isSelected, spotifyUri } = props;
-  return spotifyUri ? (
+export default (props: { isSelected: boolean; isFound: boolean }) => {
+  const { isSelected, isFound } = props;
+  return isFound ? (
     isSelected ? (
       <Avatar.Icon size={32} icon={"check"} />
     ) : (

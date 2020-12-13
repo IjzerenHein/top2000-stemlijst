@@ -3,6 +3,7 @@ import * as functions from "firebase-functions";
 import cors from "./cors";
 import { Source, getSourceFromURL } from "./sources";
 import { ArgumentError } from "./errors";
+import type { ProviderId } from "./providers";
 
 /**
  * 1. Find source
@@ -15,17 +16,19 @@ export const importUrl = functions.https.onRequest(
     cors(request, response);
 
     const url = request.query?.url;
-    functions.logger.info("importUrl", { url });
+    const provider: ProviderId =
+      (request.query.provider as ProviderId) || "spotify";
+    functions.logger.info("importUrl", { url, provider });
 
     let source: Source | undefined;
     let error: Error | undefined;
     try {
-      source = getSourceFromURL(url as string);
+      source = getSourceFromURL(url as string, provider);
       if (!source) {
         throw new ArgumentError("Link word niet herkend");
       }
       await source.fetch();
-      await source.resolveSpotifySongs();
+      await source.resolveSongIds(provider);
     } catch (err) {
       error = err;
     }

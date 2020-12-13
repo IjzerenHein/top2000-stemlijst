@@ -7,19 +7,19 @@ import { ErrorText } from "./Text";
 import { Button } from "./Button";
 import { t } from "../i18n";
 import { useMusicProvider } from "../providers";
-import { useNavigation } from "@react-navigation/native";
+import { useLinkTo } from "@react-navigation/native";
 
 export default observer(() => {
   const { songs, importStatus } = store;
   const { error, isLoading } = importStatus;
   const provider = useMusicProvider();
-  const navigation = useNavigation();
+  const linkTo = useLinkTo();
   return (
     <View style={styles.container}>
       <Button
         disabled={!songs.length}
         loading={isLoading}
-        onPress={() => store.saveAndAuthorizeForImport(provider, navigation)}
+        onPress={() => store.saveAndAuthorizeForImport(provider, linkTo)}
       >
         {t(`Importeer $1 songs naar $2`, songs.length + "", provider.name)}
       </Button>

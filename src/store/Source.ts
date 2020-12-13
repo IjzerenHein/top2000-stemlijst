@@ -35,10 +35,10 @@ export class Source {
   }
 
   get failedSongs(): Song[] {
-    return this.mutableSongs.filter((song) => !song.spotifyUri);
+    return this.mutableSongs.filter((song) => !song.id);
   }
 
-  toJSON(): object {
+  toJSON(): SourceData {
     return {
       url: this.url,
       name: this.name,

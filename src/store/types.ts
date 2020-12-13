@@ -2,8 +2,8 @@ export type SongData = {
   title: string;
   artist: string;
   imageUrl?: string;
-  spotifyUri?: string;
   isSelected?: boolean;
+  id?: string;
 };
 
 export type SourceData = {
@@ -12,5 +12,10 @@ export type SourceData = {
   title: string;
   description: string;
   imageUrl?: string;
+  songs: SongData[];
+};
+
+export type DocumentData = {
+  sources: SourceData[];
   songs: SongData[];
 };

@@ -57,7 +57,7 @@ export default observer(() => {
             .then((source) => source && setText(""))
         }
       >
-        {isLoading ? t("Bezig met ophalen...") : t("Haal lijst op")}
+        {isLoading ? t("Bezig met ophalen ...") : t("Haal lijst op")}
       </Button>
     </View>
   );

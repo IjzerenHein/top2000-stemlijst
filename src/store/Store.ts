@@ -5,7 +5,7 @@ import uniqBy from "lodash.uniqby";
 
 import { Song } from "./Song";
 import { Source } from "./Source";
-import type { SourceData, SongData } from "./types";
+import type { SourceData, DocumentData } from "./types";
 import { analytics, firestore } from "../firebase";
 import { MusicProvider } from "../providers";
 import { t } from "../i18n";
@@ -17,7 +17,11 @@ import {
   createSpotifyPlaylist,
   addSpotifyPlaylistTracks,
 } from "../providers/spotify";
-import { authorizeAppleMusic } from "../providers/applemusic";
+import {
+  AppleMusicAuth,
+  authorizeAppleMusic,
+  createAppleMusicPlaylist,
+} from "../providers/applemusic";
 
 type Status = {
   isLoading: boolean;
@@ -64,9 +68,8 @@ export class Store {
         provider: provider.id,
         name: sourceData.name,
         songs: sourceData.songs.length,
-        missingSongs: sourceData.songs.filter(
-          (songData) => !songData.spotifyUri
-        ).length,
+        missingSongs: sourceData.songs.filter((songData) => !songData.id)
+          .length,
       });
       return source;
     } catch (error) {
@@ -97,11 +100,11 @@ export class Store {
       this.mutableSources.flatMap((source) =>
         source.songs.filter((song) => song.isSelected)
       ),
-      (song) => song.spotifyUri
+      (song) => song.id
     );
   }
 
-  toJSON() {
+  toJSON(): DocumentData {
     return {
       sources: this.mutableSources.map((source) => source.toJSON()),
       songs: this.songs.map((song) => song.toJSON()),
@@ -112,7 +115,7 @@ export class Store {
    * 1. Stores the imported songs in Firestore
    * 2. Redirects to Spotify to authorize the user
    */
-  async saveAndAuthorizeForImport(provider: MusicProvider, navigation: any) {
+  async saveAndAuthorizeForImport(provider: MusicProvider, linkTo: any) {
     runInAction(() => {
       this.mutableImportStatus.set({
         isLoading: true,
@@ -133,7 +136,7 @@ export class Store {
           authorizeSpotify(id, true);
           break;
         case "applemusic":
-          this.importToAppleMusic(id, provider, navigation);
+          this.importToAppleMusic(id, provider, linkTo);
           break;
         default:
           throw new Error(`Provider not supported: "${provider.id}"`);
@@ -155,22 +158,72 @@ export class Store {
   async importToAppleMusic(
     importId: string,
     provider: MusicProvider,
-    navigation: any
+    linkTo: any
   ) {
+    // Authorize
+    let auth: AppleMusicAuth;
     try {
-      await authorizeAppleMusic();
+      auth = await authorizeAppleMusic();
     } catch (error) {
       analytics.logEvent("authorize_failure", {
         importId,
         provider: provider.id,
         error,
       });
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          error: new Error(
+            t("$1 authorisatie mislukt ($2)", provider.name, error)
+          ),
+        });
+      });
       return;
     }
 
-    // TODO store
+    // Show import screen
+    linkTo(`/${provider.id}/import`);
 
-    navigation.navigate("applemusic-import");
+    // Create playlist
+    try {
+      const docData = this.toJSON();
+      const playlistName = docData.sources[0].title;
+      const playlistUrl = await createAppleMusicPlaylist(
+        auth,
+        playlistName,
+        "",
+        docData.songs.map((song) => song.id!)
+      );
+
+      analytics.logEvent("create_playlist", {
+        importId,
+        provider: provider.id,
+        public: false,
+        sources: docData.sources.length,
+        songs: docData.songs.length,
+      });
+
+      // All done
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          playlistUrl,
+        });
+      });
+    } catch (error) {
+      analytics.logEvent("create_playlist_failure", {
+        importId,
+        provider: provider.id,
+        error,
+      });
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          error,
+        });
+      });
+      return;
+    }
   }
 
   /**
@@ -222,10 +275,7 @@ export class Store {
       if (!doc.exists) {
         throw new Error("Kan import data niet vinden");
       }
-      const docData: {
-        sources: SourceData[];
-        songs: SongData[];
-      } = doc.data() as any;
+      const docData: DocumentData = doc.data() as any;
       const sources = docData.sources.map(
         (sourceData) => new Source(sourceData)
       );
@@ -250,11 +300,10 @@ export class Store {
         await addSpotifyPlaylistTracks(
           access_token,
           playlist.id,
-          docData.songs.map((song) => song.spotifyUri!)
+          docData.songs.map((song) => song.id!)
         );
-      } else if (provider.id === "applemusic") {
-        // TODO
-        throw new Error("Apple music import not yet implemented");
+      } else {
+        throw new Error("Provider not supported");
       }
 
       analytics.logEvent("create_playlist", {

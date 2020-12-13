@@ -2,11 +2,11 @@ import { useRoute } from "@react-navigation/native";
 
 export type ProviderId = "spotify" | "applemusic";
 
-export interface MusicProvider {
-  readonly id: ProviderId;
-  readonly name: string;
-  readonly image: any;
-}
+export type MusicProvider = {
+  id: ProviderId;
+  name: string;
+  image: any;
+};
 
 export const providers: MusicProvider[] = [
   {
@@ -22,10 +22,12 @@ export const providers: MusicProvider[] = [
 ];
 
 export function getProvider(providerId: string) {
-  return providers.find((provider) => provider.id === providerId);
+  return (
+    providers.find((provider) => provider.id === providerId) || providers[0]
+  );
 }
 
 export function useMusicProvider() {
-  const route = useRoute();
-  return getProvider(route.name) || providers[0];
+  // @ts-ignore
+  return getProvider(useRoute().params?.provider);
 }

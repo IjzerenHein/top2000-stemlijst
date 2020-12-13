@@ -1,20 +1,25 @@
 import { FUNCTIONS_URL } from "../config";
 
-export async function authorizeAppleMusic() {
+const BASE_URL = "https://api.music.apple.com/v1";
+
+export type AppleMusicAuth = {
+  developerToken: string;
+  userToken: string;
+};
+
+export async function authorizeAppleMusic(): Promise<AppleMusicAuth> {
   // Get developer token
-  console.log("Getting token...");
   const response = await fetch(`${FUNCTIONS_URL}/token?provider=applemusic`);
   const json: any = await response.json();
   if (json.error) {
     throw new Error(json.error);
   }
-  const { token } = json;
-  console.log("Token", token);
+  const developerToken = json.token;
 
-  // Configure and authorize
+  // Configure
   // @ts-ignore
   const music = MusicKit.configure({
-    developerToken: token,
+    developerToken,
     app: {
       name: "Top 2000 Stemlijst",
       icon: require("../../assets/logo.png"),
@@ -23,8 +28,61 @@ export async function authorizeAppleMusic() {
     },
   });
 
-  console.log("Authorizing...");
+  // Authorize with user
   const userToken = await music.authorize();
 
-  console.log("Authorize succesful", userToken);
+  return {
+    developerToken,
+    userToken,
+  };
+}
+
+export async function appleMusicFetch<T = any>(
+  auth: AppleMusicAuth,
+  path: string,
+  body?: any,
+  method?: "GET" | "PUT" | "POST"
+): Promise<T> {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method: method ?? "GET",
+    headers: {
+      Authorization: `Bearer ${auth.developerToken}`,
+      "Music-User-Token": auth.userToken,
+      "Content-Type": "application/json",
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return await response.json();
+}
+
+export async function createAppleMusicPlaylist(
+  auth: AppleMusicAuth,
+  name: string,
+  description: string,
+  ids: string[]
+) {
+  const json = await appleMusicFetch(
+    auth,
+    "/me/library/playlists",
+    {
+      attributes: {
+        name,
+        description,
+      },
+      relationships: {
+        tracks: {
+          data: ids.map((id) => ({
+            id,
+            type: "songs",
+          })),
+        },
+      },
+    },
+    "POST"
+  );
+  const id = json.data[0].id;
+  return `https://music.apple.com/library/playlist/${id}`;
 }

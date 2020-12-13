@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Image, TouchableHighlight } from "react-native";
 import { observer } from "mobx-react";
-import { useNavigation } from "@react-navigation/native";
+import { useLinkTo } from "@react-navigation/native";
 
 import { Colors } from "../theme";
 import { providers } from "../providers";
@@ -9,7 +9,7 @@ import { Heading, Caption } from "../components/text";
 import { License } from "../components/License";
 
 export default observer(function HomeScreen() {
-  const navigation = useNavigation();
+  const linkTo = useLinkTo();
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={require("../../assets/logo.png")} />
@@ -22,7 +22,7 @@ export default observer(function HomeScreen() {
             key={provider.id}
             style={styles.button}
             underlayColor={Colors.panel}
-            onPress={() => navigation.navigate(provider.id)}
+            onPress={() => linkTo("/" + provider.id)}
           >
             <View style={styles.providerContainer}>
               <Image style={styles.providerImage} source={provider.image} />

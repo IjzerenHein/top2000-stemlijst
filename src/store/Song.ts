@@ -6,17 +6,15 @@ export class Song {
   public readonly title: string;
   public readonly artist: string;
   public readonly imageUrl?: string;
-  public readonly spotifyUri?: string;
+  public readonly id?: string;
   private mutableIsSelected: IObservableValue<boolean>;
 
   constructor(data: SongData) {
     this.title = data.title;
     this.artist = data.artist;
     this.imageUrl = data.imageUrl;
-    this.spotifyUri = data.spotifyUri;
-    this.mutableIsSelected = observable.box(
-      data.isSelected ?? !!data.spotifyUri
-    );
+    this.id = data.id;
+    this.mutableIsSelected = observable.box(data.isSelected ?? !!data.id);
   }
 
   get isSelected(): boolean {
@@ -26,12 +24,12 @@ export class Song {
     this.mutableIsSelected.set(value);
   }
 
-  toJSON() {
+  toJSON(): SongData {
     return {
       title: this.title || "",
       artist: this.artist || "",
       imageUrl: this.imageUrl || "",
-      spotifyUri: this.spotifyUri || "",
+      id: this.id || "",
       isSelected: this.isSelected,
     };
   }

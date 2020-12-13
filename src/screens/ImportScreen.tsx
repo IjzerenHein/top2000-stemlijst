@@ -20,9 +20,9 @@ export default observer(function ImportScreen() {
   if (error) {
     text = error.message;
   } else if (!songs.length) {
-    text = t("Bezig met laden...");
+    text = t("Bezig met laden ...");
   } else if (isLoading) {
-    text = t("Bezig met importeren van $1 song(s)", songs.length + "");
+    text = t("Bezig met importeren van $1 song(s) ...", songs.length + "");
   } else {
     text = t("Jouw afspeellijst is aangemaakt!");
   }
