@@ -1,18 +1,73 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image, TouchableHighlight } from "react-native";
 import { observer } from "mobx-react";
+import { useNavigation } from "@react-navigation/native";
 
 import { Colors } from "../theme";
+import { providers } from "../providers";
+import { Heading, Caption } from "../components/text";
+import { License } from "../components/License";
 
 export default observer(function HomeScreen() {
-  return <View></View>;
+  const navigation = useNavigation();
+  return (
+    <View style={styles.container}>
+      <Image style={styles.logo} source={require("../../assets/logo.png")} />
+      <Heading style={styles.title}>
+        Waar wilt u de stemlijst importeren?
+      </Heading>
+      <View style={styles.providers}>
+        {Object.values(providers).map((provider) => (
+          <TouchableHighlight
+            style={styles.button}
+            underlayColor={Colors.panel}
+            onPress={() => navigation.navigate(provider.id)}
+          >
+            <View style={styles.providerContainer}>
+              <Image style={styles.providerImage} source={provider.image} />
+              <Caption>{provider.name} </Caption>
+            </View>
+          </TouchableHighlight>
+        ))}
+      </View>
+      <License />
+    </View>
+  );
 });
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    // @ts-ignore
-    overflowY: "hidden",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+  title: {
+    marginHorizontal: 20,
+    textAlign: "center",
+  },
+  providers: {
+    flexDirection: "row",
+    marginTop: 20,
+  },
+  button: {
+    borderRadius: 10,
+  },
+  providerContainer: {
+    flexDirection: "column",
+    margin: 20,
+    alignItems: "center",
+  },
+  providerImage: {
+    width: 96,
+    height: 96,
+    resizeMode: "contain",
   },
 });

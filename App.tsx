@@ -24,17 +24,27 @@ const ImportScreen2 = (props: any) => (
   <ImportScreen {...props} queryParams={queryParams ?? {}} />
 );
 
+const linking = {
+  enabled: true,
+  prefixes: [],
+  config: {
+    screens: {
+      home: "",
+    },
+  },
+};
+
 export default () => {
   return (
     <PaperProvider theme={PaperTheme}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         {path === "spotify/authorize-createplaylist" ? (
           <Stack.Navigator initialRouteName={path || ""} headerMode="none">
             <Stack.Screen name="home" component={ImportScreen2} />
           </Stack.Navigator>
         ) : (
           <Stack.Navigator initialRouteName={path || ""} headerMode="none">
-            <Stack.Screen name="home" component={SelectScreen} />
+            <Stack.Screen name="home" component={HomeScreen} />
             <Stack.Screen name="spotify" component={SelectScreen} />
             <Stack.Screen name="applemusic" component={SelectScreen} />
           </Stack.Navigator>

@@ -18,7 +18,7 @@ const appleMusicProvider: MusicProvider = {
   image: require("../assets/apple-music.png"),
 };
 
-const providers: { [name: string]: MusicProvider } = {
+export const providers: { [name: string]: MusicProvider } = {
   spotify: spotifyProvider,
   applemusic: appleMusicProvider,
 };
