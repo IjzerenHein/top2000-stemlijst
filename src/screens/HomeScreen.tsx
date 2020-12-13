@@ -5,7 +5,7 @@ import { useLinkTo } from "@react-navigation/native";
 
 import { Colors } from "../theme";
 import { providers } from "../providers";
-import { Heading, Caption } from "../components/text";
+import { Heading, Caption } from "../components/Text";
 import { License } from "../components/License";
 
 export default observer(function HomeScreen() {
