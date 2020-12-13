@@ -10,12 +10,12 @@ export const providers: MusicProvider[] = [
   {
     id: "spotify",
     name: "Spotify",
-    image: require("../assets/spotify-green.png"),
+    image: require("../../assets/spotify-green.png"),
   },
   {
     id: "applemusic",
     name: "Apple Music",
-    image: require("../assets/apple-music.png"),
+    image: require("../../assets/apple-music.png"),
   },
 ];
 

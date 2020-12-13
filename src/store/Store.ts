@@ -15,7 +15,7 @@ import {
   getSpotifyUserProfile,
   createSpotifyPlaylist,
   addSpotifyPlaylistTracks,
-} from "../spotify";
+} from "../providers/spotify";
 
 const ORIGIN =
   process.env.NODE_ENV === "development"

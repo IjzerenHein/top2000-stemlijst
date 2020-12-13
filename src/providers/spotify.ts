@@ -1,4 +1,4 @@
-import * as config from "./config";
+import * as config from "../config";
 
 const BASE_URL = "https://api.spotify.com/v1";
 
