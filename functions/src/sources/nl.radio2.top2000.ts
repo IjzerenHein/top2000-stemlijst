@@ -1,5 +1,5 @@
-import { Source } from "../Source";
-import { Song } from "../Song";
+import { Source } from "./Source";
+import { Song } from "../types";
 import fetch from "node-fetch";
 
 const TITLE = "Top 2000 Stemlijst";

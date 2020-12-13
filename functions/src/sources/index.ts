@@ -1,10 +1,12 @@
-import { Source } from "../Source";
+import { Source } from "./Source";
 
 interface SupportedSource {
   getSourceFromURL(url: string): Source | undefined;
 }
 
 const supportedSources: SupportedSource[] = [require("./nl.radio2.top2000")];
+
+export { Source };
 
 export function getSourceFromURL(url: string): Source | undefined {
   let source: Source | undefined;

@@ -1,5 +1,5 @@
-import type { Song } from "./Song";
-import { getSpotifyTrackUri } from "./spotify";
+import type { Song } from "../types";
+import { getSpotifyTrackUri } from "../providers/spotify";
 
 export type PartialSourceData<T = any> = {
   name?: string;
