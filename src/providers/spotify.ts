@@ -1,4 +1,4 @@
-import * as config from "./config";
+import * as config from "../config";
 
 const BASE_URL = "https://api.spotify.com/v1";
 
@@ -19,8 +19,8 @@ export type SpotifyPlaylist = {
 export function authorizeSpotify(importId: string, isPublicPlaylist: boolean) {
   const redirectUri =
     process.env.NODE_ENV === "development"
-      ? "http://localhost:19006/authorize-spotify-createplaylist"
-      : "https://top2000stemlijst.nl/authorize-spotify-createplaylist";
+      ? "http://localhost:19006/spotify/authorize-createplaylist"
+      : "https://top2000stemlijst.nl/spotify/authorize-createplaylist";
   const url = `https://accounts.spotify.com/authorize?client_id=${
     config.SPOTIFY_CLIENT_ID
   }&response_type=token&redirect_uri=${redirectUri}&state=${importId}&scope=${

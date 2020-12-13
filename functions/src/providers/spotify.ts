@@ -52,10 +52,13 @@ async function getAccessToken(): Promise<string> {
   return promise;
 }
 
-export async function getSpotifyTrackUri(
+export async function getSpotifySongData(
   title: string,
   artist: string
-): Promise<string> {
+): Promise<{
+  id: string;
+  imageUrl?: string;
+}> {
   const accessToken = await getAccessToken();
   const response = await fetch(
     `https://api.spotify.com/v1/search?q=${encodeURIComponent(
@@ -71,5 +74,7 @@ export async function getSpotifyTrackUri(
   if (!json.tracks?.items?.length) {
     throw new Error("Not found");
   }
-  return json.tracks.items[0].uri;
+  return {
+    id: json.tracks.items[0].uri,
+  };
 }

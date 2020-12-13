@@ -1,12 +1,13 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Avatar } from "react-native-paper";
+import { t } from "../i18n";
 
 import { ErrorText } from "./Text";
 
-export default (props: { isSelected: boolean; spotifyUri?: string }) => {
-  const { isSelected, spotifyUri } = props;
-  return spotifyUri ? (
+export default (props: { isSelected: boolean; isFound: boolean }) => {
+  const { isSelected, isFound } = props;
+  return isFound ? (
     isSelected ? (
       <Avatar.Icon size={32} icon={"check"} />
     ) : (
@@ -14,7 +15,7 @@ export default (props: { isSelected: boolean; spotifyUri?: string }) => {
     )
   ) : (
     <View style={styles.errorContainer}>
-      <ErrorText visible label="Niet gevonden" />
+      <ErrorText visible label={t("Niet gevonden")} />
     </View>
   );
 };

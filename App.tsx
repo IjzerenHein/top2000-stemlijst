@@ -1,20 +1,13 @@
 import React from "react";
-import * as Linking from "expo-linking";
+import { Provider as PaperProvider } from "react-native-paper";
 
-import SelectScreen from "./src/screens/SelectScreen";
-import ImportScreen from "./src/screens/ImportScreen";
-
-const { path, queryParams } = Linking.parse(
-  window.location.href.replace(
-    "/authorize-spotify-createplaylist#",
-    "/authorize-spotify-createplaylist?"
-  )
-);
+import { PaperTheme } from "./src/theme";
+import Router from "./src/Router";
 
 export default () => {
-  return path === "authorize-spotify-createplaylist" ? (
-    <ImportScreen queryParams={queryParams ?? {}} />
-  ) : (
-    <SelectScreen />
+  return (
+    <PaperProvider theme={PaperTheme}>
+      <Router />
+    </PaperProvider>
   );
 };

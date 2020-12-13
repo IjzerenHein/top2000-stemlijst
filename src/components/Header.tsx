@@ -1,7 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
+
+import { useMusicProvider } from "../providers";
 
 export default () => {
+  const provider = useMusicProvider();
   return (
     <View style={styles.container}>
       <Image
@@ -12,10 +15,7 @@ export default () => {
         style={styles.arrowImage}
         source={require("../../assets/arrow-right.png")}
       />
-      <Image
-        style={styles.spotifyImage}
-        source={require("../../assets/spotify-green.png")}
-      />
+      <Image style={styles.providerImage} source={provider.image} />
     </View>
   );
 };
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginHorizontal: 40,
   },
-  spotifyImage: {
+  providerImage: {
     width: 96,
     height: 96,
     resizeMode: "contain",

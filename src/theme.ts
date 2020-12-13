@@ -13,6 +13,8 @@ export const Colors = {
   yellow: "#C78B01",
   red: "#d2151b",
   green: "#1DB954",
+  spotifyGreen: "#1DB954",
+  appleMusicRed: "#fa233b",
   black: "#191414",
 };
 

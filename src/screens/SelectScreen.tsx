@@ -1,9 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
-import { Provider as PaperProvider } from "react-native-paper";
 
-import { Colors, PaperTheme } from "../theme";
+import { Colors } from "../theme";
 import { store } from "../store";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
@@ -14,32 +13,30 @@ const FOOTER_HEIGHT = 100;
 
 export default observer(function SelectScreen() {
   return (
-    <PaperProvider theme={PaperTheme}>
-      <View style={styles.container}>
-        <View style={styles.scrollContainer}>
-          <View
-            style={[
-              styles.content,
-              store.sources.length ? styles.contentWithSources : undefined,
-            ]}
-          >
-            <Header />
-            {store.sources.map((source, index) => (
-              <SongList key={index} source={source} />
-            ))}
-            <AddFromUrlBar />
-          </View>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.scrollContainer}>
         <View
           style={[
-            styles.footer,
-            !store.sources.length ? styles.footerHidden : undefined,
+            styles.content,
+            store.sources.length ? styles.contentWithSources : undefined,
           ]}
         >
-          <Footer />
+          <Header />
+          {store.sources.map((source, index) => (
+            <SongList key={index} source={source} />
+          ))}
+          <AddFromUrlBar />
         </View>
       </View>
-    </PaperProvider>
+      <View
+        style={[
+          styles.footer,
+          !store.sources.length ? styles.footerHidden : undefined,
+        ]}
+      >
+        <Footer />
+      </View>
+    </View>
   );
 });
 

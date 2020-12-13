@@ -5,20 +5,23 @@ import uniqBy from "lodash.uniqby";
 
 import { Song } from "./Song";
 import { Source } from "./Source";
-import type { SourceData, SongData } from "./types";
+import type { SourceData, DocumentData } from "./types";
 import { analytics, firestore } from "../firebase";
+import { MusicProvider } from "../providers";
+import { t } from "../i18n";
+import { FUNCTIONS_URL } from "../config";
 
 import {
   authorizeSpotify,
   getSpotifyUserProfile,
   createSpotifyPlaylist,
   addSpotifyPlaylistTracks,
-} from "../spotify";
-
-const ORIGIN =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5001/top2000-stemlijst/us-central1"
-    : "https://us-central1-top2000-stemlijst.cloudfunctions.net";
+} from "../providers/spotify";
+import {
+  AppleMusicAuth,
+  authorizeAppleMusic,
+  createAppleMusicPlaylist,
+} from "../providers/applemusic";
 
 type Status = {
   isLoading: boolean;
@@ -35,7 +38,7 @@ export class Store {
     isLoading: false,
   });
 
-  async addSource(url: string) {
+  async addSource(url: string, provider: MusicProvider) {
     runInAction(() => {
       this.mutableAddSourceStatus.set({
         isLoading: true,
@@ -44,7 +47,9 @@ export class Store {
     });
     try {
       const response = await fetch(
-        `${ORIGIN}/importUrl?url=${encodeURIComponent(url)}`
+        `${FUNCTIONS_URL}/importUrl?url=${encodeURIComponent(url)}&provider=${
+          provider.id
+        }`
       );
       const json: any = await response.json();
       if (json.error) {
@@ -60,16 +65,17 @@ export class Store {
       });
       analytics.logEvent("import_url", {
         url,
+        provider: provider.id,
         name: sourceData.name,
         songs: sourceData.songs.length,
-        missingSongs: sourceData.songs.filter(
-          (songData) => !songData.spotifyUri
-        ).length,
+        missingSongs: sourceData.songs.filter((songData) => !songData.id)
+          .length,
       });
       return source;
     } catch (error) {
       analytics.logEvent("import_failure", {
         url,
+        provider: provider.id,
         error: error.message,
       });
       runInAction(() => {
@@ -94,11 +100,11 @@ export class Store {
       this.mutableSources.flatMap((source) =>
         source.songs.filter((song) => song.isSelected)
       ),
-      (song) => song.spotifyUri
+      (song) => song.id
     );
   }
 
-  toJSON() {
+  toJSON(): DocumentData {
     return {
       sources: this.mutableSources.map((source) => source.toJSON()),
       songs: this.songs.map((song) => song.toJSON()),
@@ -109,7 +115,7 @@ export class Store {
    * 1. Stores the imported songs in Firestore
    * 2. Redirects to Spotify to authorize the user
    */
-  async saveAndAuthorizeForImport() {
+  async saveAndAuthorizeForImport(provider: MusicProvider, linkTo: any) {
     runInAction(() => {
       this.mutableImportStatus.set({
         isLoading: true,
@@ -121,14 +127,24 @@ export class Store {
       const { id } = await firestore.collection("imports").add(data);
       analytics.logEvent("save_import", {
         importId: id,
-        type: "spotify",
+        provider: provider.id,
         sources: data.sources.length,
         songs: data.songs.length,
       });
-      authorizeSpotify(id, true);
+      switch (provider.id) {
+        case "spotify":
+          authorizeSpotify(id, true);
+          break;
+        case "applemusic":
+          this.importToAppleMusic(id, provider, linkTo);
+          break;
+        default:
+          throw new Error(`Provider not supported: "${provider.id}"`);
+      }
     } catch (error) {
       analytics.logEvent("save_failure", {
         error: error.message,
+        provider: provider.id,
       });
       runInAction(() => {
         this.mutableImportStatus.set({
@@ -139,6 +155,77 @@ export class Store {
     }
   }
 
+  async importToAppleMusic(
+    importId: string,
+    provider: MusicProvider,
+    linkTo: any
+  ) {
+    // Authorize
+    let auth: AppleMusicAuth;
+    try {
+      auth = await authorizeAppleMusic();
+    } catch (error) {
+      analytics.logEvent("authorize_failure", {
+        importId,
+        provider: provider.id,
+        error,
+      });
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          error: new Error(
+            t("$1 authorisatie mislukt ($2)", provider.name, error)
+          ),
+        });
+      });
+      return;
+    }
+
+    // Show import screen
+    linkTo(`/${provider.id}/import`);
+
+    // Create playlist
+    try {
+      const docData = this.toJSON();
+      const playlistName = docData.sources[0].title;
+      const playlistUrl = await createAppleMusicPlaylist(
+        auth,
+        playlistName,
+        "",
+        docData.songs.map((song) => song.id!)
+      );
+
+      analytics.logEvent("create_playlist", {
+        importId,
+        provider: provider.id,
+        public: false,
+        sources: docData.sources.length,
+        songs: docData.songs.length,
+      });
+
+      // All done
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          playlistUrl,
+        });
+      });
+    } catch (error) {
+      analytics.logEvent("create_playlist_failure", {
+        importId,
+        provider: provider.id,
+        error,
+      });
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          error,
+        });
+      });
+      return;
+    }
+  }
+
   /**
    * 1. Loads the imports songs from Firestore
    * 2. Gets user Id
@@ -146,7 +233,10 @@ export class Store {
    * 4. Adds tracks to playlist
    * 5. Updates playlist url
    */
-  async importFromAuthorizationCallback(queryParams: any) {
+  async importFromAuthorizationCallback(
+    queryParams: any,
+    provider: MusicProvider
+  ) {
     const {
       access_token,
       state: importId,
@@ -158,13 +248,15 @@ export class Store {
     if (error) {
       analytics.logEvent("authorize_failure", {
         importId,
-        type: "spotify",
+        provider: provider.id,
         error,
       });
       runInAction(() => {
         this.mutableImportStatus.set({
           isLoading: false,
-          error: new Error(`Spotify authorisatie mislukt (${error})`),
+          error: new Error(
+            t("$1 authorisatie mislukt ($2)", provider.name, error)
+          ),
         });
       });
       return;
@@ -183,48 +275,40 @@ export class Store {
       if (!doc.exists) {
         throw new Error("Kan import data niet vinden");
       }
-      const docData: {
-        sources: SourceData[];
-        songs: SongData[];
-      } = doc.data() as any;
+      const docData: DocumentData = doc.data() as any;
       const sources = docData.sources.map(
         (sourceData) => new Source(sourceData)
       );
       runInAction(() => this.mutableSources.replace(sources));
 
-      // Get user-id for which to create a playlist
-      const userProfile = await getSpotifyUserProfile(access_token);
-      // console.log("userProfile", userProfile);
+      let playlistUrl: string;
+      if (provider.id === "spotify") {
+        // Get user-id for which to create a playlist
+        const userProfile = await getSpotifyUserProfile(access_token);
 
-      // Create playlist
-      const playlistName = sources[0].title;
-      const playlist = await createSpotifyPlaylist(
-        access_token,
-        userProfile.id,
-        playlistName,
-        false
-      );
-      const playlistUrl = playlist.external_urls.spotify;
-      // console.log("playlist", playlist);
+        // Create playlist
+        const playlistName = sources[0].title;
+        const playlist = await createSpotifyPlaylist(
+          access_token,
+          userProfile.id,
+          playlistName,
+          false
+        );
+        playlistUrl = playlist.external_urls.spotify;
 
-      // Add tracks to playlist
-      await addSpotifyPlaylistTracks(
-        access_token,
-        playlist.id,
-        docData.songs.map((song) => song.spotifyUri!)
-      );
-
-      // Update url-bar
-      history.replaceState("", document.title, "/");
-
-      // Store import url
-      /* docRef.update({
-        spotifyUri: playlist.uri,
-      }); */
+        // Add tracks to playlist
+        await addSpotifyPlaylistTracks(
+          access_token,
+          playlist.id,
+          docData.songs.map((song) => song.id!)
+        );
+      } else {
+        throw new Error("Provider not supported");
+      }
 
       analytics.logEvent("create_playlist", {
         importId,
-        type: "spotify",
+        provider: provider.id,
         public: false,
         sources: docData.sources.length,
         songs: docData.songs.length,
@@ -240,7 +324,7 @@ export class Store {
     } catch (error) {
       analytics.logEvent("create_playlist_failure", {
         importId,
-        type: "spotify",
+        provider: provider.id,
         error,
       });
       runInAction(() => {
@@ -256,14 +340,14 @@ export class Store {
     return this.mutableImportStatus.get();
   }
 
-  openPlaylist() {
+  openPlaylist(provider: MusicProvider) {
     const { playlistUrl } = this.importStatus;
     if (!playlistUrl) {
       return;
     }
 
     analytics.logEvent("open_playlist", {
-      type: "spotify",
+      provider: provider.id,
     });
 
     Linking.openURL(playlistUrl);

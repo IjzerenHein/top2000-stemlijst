@@ -1,33 +1,24 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { Song } from "../store";
 import { observer } from "mobx-react";
 import { List } from "react-native-paper";
+
+import { Song } from "../store";
 import SongImage from "./SongImage";
-import SpotifyIcon from "./SpotifyIcon";
+import SongIcon from "./SongIcon";
 
 export default observer((props: { song: Song }) => {
-  const { title, artist, imageUrl, spotifyUri, isSelected } = props.song;
+  const { title, artist, imageUrl, isSelected, id } = props.song;
   return (
     <List.Item
-      style={styles.container}
       title={artist}
       description={title}
       left={() => <SongImage imageUrl={imageUrl} />}
-      right={() => (
-        <SpotifyIcon isSelected={isSelected} spotifyUri={spotifyUri} />
-      )}
+      right={() => <SongIcon isSelected={isSelected} isFound={!!id} />}
       onPress={() => {
-        if (spotifyUri) {
+        if (id) {
           props.song.isSelected = !isSelected;
         }
       }}
     />
   );
-});
-
-const styles = StyleSheet.create({
-  container: {
-    // marginLeft: 50,
-  },
 });

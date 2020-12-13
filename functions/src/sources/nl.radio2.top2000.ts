@@ -1,10 +1,15 @@
-import { Source } from "../Source";
-import { Song } from "../Song";
 import fetch from "node-fetch";
+
+import { Source } from "./Source";
+import { Song } from "../types";
+import type { ProviderId } from "../providers";
 
 const TITLE = "Top 2000 Stemlijst";
 
-export function getSourceFromURL(url: string): Source | null {
+export function getSourceFromURL(
+  url: string,
+  provider: ProviderId
+): Source | null {
   const customFields: any = {};
 
   // eg. https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53
@@ -52,15 +57,22 @@ export function getSourceFromURL(url: string): Source | null {
         const { _source /* _id */ } = item;
         const { image, title, artist, audio } = _source;
         // eg. https://stem-backend.npo.nl//storage/preview/827/spotify-407ltk0BtcZI8kgu0HH4Yj.mp3
-        const trackIdMatch = audio?.match(
-          /^https\:\/\/stem-backend.npo.nl(\/+)storage\/preview\/(\d+)\/spotify-([a-zA-Z0-9]+)\./
-        );
+        const spotifyTrackIdMatch =
+          provider === "spotify"
+            ? audio?.match(
+                /^https\:\/\/stem-backend.npo.nl(\/+)storage\/preview\/(\d+)\/spotify-([a-zA-Z0-9]+)\./
+              )
+            : undefined;
         return {
           title,
           artist,
           imageUrl: image,
-          ...(trackIdMatch
-            ? { spotifyUri: `spotify:track:${trackIdMatch[3]}` }
+          ...(spotifyTrackIdMatch
+            ? {
+                id: `spotify:track:${spotifyTrackIdMatch[3]}`,
+                // TODO: remove spotifyUri
+                spotifyUri: `spotify:track:${spotifyTrackIdMatch[3]}`,
+              }
             : {}),
         };
       });

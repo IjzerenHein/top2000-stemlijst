@@ -1,50 +1,49 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
-import { Provider as PaperProvider } from "react-native-paper";
 
-import { Colors, PaperTheme } from "../theme";
+import { Colors } from "../theme";
 import { store } from "../store";
 import Header from "../components/Header";
 import { Heading } from "../components/Text";
 import { Button } from "../components/Button";
 import { License } from "../components/License";
+import { t } from "../i18n";
+import { useMusicProvider } from "../providers";
 
-export default observer(function ImportScreen(props: { queryParams: any }) {
+export default observer(function ImportScreen() {
   const { songs, importStatus } = store;
   const { isLoading, error, playlistUrl } = importStatus;
-
-  React.useEffect(() => {
-    history.replaceState("", document.title, "/");
-    store.importFromAuthorizationCallback(props.queryParams);
-  }, []);
+  const provider = useMusicProvider();
 
   let text = "";
   if (error) {
     text = error.message;
   } else if (!songs.length) {
-    text = "Bezig met laden...";
+    text = t("Bezig met laden ...");
   } else if (isLoading) {
-    text = `Bezig met importeren van ${songs.length} songs...`;
+    text = t("Bezig met importeren van $1 song(s) ...", songs.length + "");
   } else {
-    text = "Jouw afspeellijst is aangemaakt!";
+    text = t("Jouw afspeellijst is aangemaakt!");
   }
 
   return (
-    <PaperProvider theme={PaperTheme}>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <Header />
-          <Heading style={styles.text}>{text}</Heading>
-          {playlistUrl ? (
-            <Button style={styles.button} onPress={() => store.openPlaylist()}>
-              Open afspeellijst in Spotify
-            </Button>
-          ) : undefined}
-        </View>
-        <License />
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <Header />
+        <Heading style={styles.text}>{text}</Heading>
+        {playlistUrl ? (
+          <Button
+            style={styles.button}
+            color={provider.color}
+            onPress={() => store.openPlaylist(provider)}
+          >
+            {t("Open afspeellijst in $1", provider.name)}
+          </Button>
+        ) : undefined}
       </View>
-    </PaperProvider>
+      <License />
+    </View>
   );
 });
 
