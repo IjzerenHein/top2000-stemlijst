@@ -9,6 +9,7 @@ import type { SourceData, SongData } from "./types";
 import { analytics, firestore } from "../firebase";
 import { MusicProvider } from "../providers";
 import { t } from "../i18n";
+import { FUNCTIONS_URL } from "../config";
 
 import {
   authorizeSpotify,
@@ -16,11 +17,7 @@ import {
   createSpotifyPlaylist,
   addSpotifyPlaylistTracks,
 } from "../providers/spotify";
-
-const ORIGIN =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5001/top2000-stemlijst/us-central1"
-    : "https://us-central1-top2000-stemlijst.cloudfunctions.net";
+import { authorizeAppleMusic } from "../providers/applemusic";
 
 type Status = {
   isLoading: boolean;
@@ -46,7 +43,7 @@ export class Store {
     });
     try {
       const response = await fetch(
-        `${ORIGIN}/importUrl?url=${encodeURIComponent(url)}&provider=${
+        `${FUNCTIONS_URL}/importUrl?url=${encodeURIComponent(url)}&provider=${
           provider.id
         }`
       );
@@ -134,6 +131,9 @@ export class Store {
       switch (provider.id) {
         case "spotify":
           authorizeSpotify(id, true);
+          break;
+        case "applemusic":
+          await authorizeAppleMusic(id);
           break;
         default:
           throw new Error(`Provider not supported: "${provider.id}"`);
