@@ -6,24 +6,22 @@ export interface MusicProvider {
   readonly image: any;
 }
 
-const spotifyProvider: MusicProvider = {
-  id: "spotify",
-  name: "Spotify",
-  image: require("../assets/spotify-green.png"),
-};
-
-const appleMusicProvider: MusicProvider = {
-  id: "applemusic",
-  name: "Apple Music",
-  image: require("../assets/apple-music.png"),
-};
-
-export const providers: { [name: string]: MusicProvider } = {
-  spotify: spotifyProvider,
-  applemusic: appleMusicProvider,
-};
+export const providers: MusicProvider[] = [
+  {
+    id: "spotify",
+    name: "Spotify",
+    image: require("../assets/spotify-green.png"),
+  },
+  {
+    id: "applemusic",
+    name: "Apple Music",
+    image: require("../assets/apple-music.png"),
+  },
+];
 
 export function useMusicProvider() {
   const route = useRoute();
-  return providers[route.name] || providers.spotify;
+  return (
+    providers.find((provider) => provider.id === route.name) || providers[0]
+  );
 }

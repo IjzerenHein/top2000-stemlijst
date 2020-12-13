@@ -17,8 +17,9 @@ export default observer(function HomeScreen() {
         Waar wilt u de stemlijst importeren?
       </Heading>
       <View style={styles.providers}>
-        {Object.values(providers).map((provider) => (
+        {providers.map((provider) => (
           <TouchableHighlight
+            key={provider.id}
             style={styles.button}
             underlayColor={Colors.panel}
             onPress={() => navigation.navigate(provider.id)}
