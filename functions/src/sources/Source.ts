@@ -44,7 +44,7 @@ export class Source<T = any> {
     };
   }
 
-  static async resolveSongData(
+  private static async resolveSongData(
     provider: ProviderId,
     title: string,
     artist: string,
@@ -75,23 +75,38 @@ export class Source<T = any> {
     const songs = await Promise.all(
       this._data.songs.map(async (song) => {
         if (song.id) {
-          console.log("EXISTING SONG ID: ", provider, song.id, song.title);
+          // console.log("EXISTING SONG ID: ", provider, song.id, song.title);
           return song;
         }
         try {
-          const result = await Source.resolveSongData(
-            provider,
-            song.title,
-            song.artist,
-            cache
-          );
-          console.log("FOUND SONG ID: ", provider, result, song.title);
-          return {
-            ...song,
-            ...result,
-          };
+          try {
+            const result = await Source.resolveSongData(
+              provider,
+              song.title,
+              song.artist,
+              cache
+            );
+            // console.log("FOUND SONG ID: ", provider, result, song.title);
+            return {
+              ...song,
+              ...result,
+            };
+          } catch (err) {
+            const safeTitle = song.title.replace(/\([^)]*\)/g, "");
+            if (safeTitle === song.title) throw err;
+            const result = await Source.resolveSongData(
+              provider,
+              safeTitle,
+              song.artist,
+              cache
+            );
+            // console.log("FOUND SONG ID #2: ", provider, result, song.title);
+            return {
+              ...song,
+              ...result,
+            };
+          }
         } catch (err) {
-          // TODO - cleanup title (e.g. "Heroes (album versie)")
           console.log(
             "NOT FOUND SONG ID: ",
             provider,
