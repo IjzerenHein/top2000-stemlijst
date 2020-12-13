@@ -35,6 +35,7 @@ export default observer(function ImportScreen() {
         {playlistUrl ? (
           <Button
             style={styles.button}
+            color={provider.color}
             onPress={() => store.openPlaylist(provider)}
           >
             {t("Open afspeellijst in $1", provider.name)}

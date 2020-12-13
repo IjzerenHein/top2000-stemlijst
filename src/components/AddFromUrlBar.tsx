@@ -48,6 +48,7 @@ export default observer(() => {
           styles.button,
           !text && !sources.length ? styles.invisibleButton : undefined,
         ]}
+        color={provider.color}
         mode={sources.length ? "outlined" : "contained"}
         loading={isLoading}
         disabled={!text}
@@ -57,7 +58,7 @@ export default observer(() => {
             .then((source) => source && setText(""))
         }
       >
-        {isLoading ? t("Bezig met ophalen ...") : t("Haal lijst op")}
+        {isLoading ? t("Bezig met ophalen ...") : t("Haal stemlijst op")}
       </Button>
     </View>
   );

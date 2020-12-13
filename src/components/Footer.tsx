@@ -17,6 +17,7 @@ export default observer(() => {
   return (
     <View style={styles.container}>
       <Button
+        color={provider.color}
         disabled={!songs.length}
         loading={isLoading}
         onPress={() => store.saveAndAuthorizeForImport(provider, linkTo)}
