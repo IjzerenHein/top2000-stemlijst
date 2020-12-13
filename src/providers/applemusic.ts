@@ -1,6 +1,6 @@
 import { FUNCTIONS_URL } from "../config";
 
-export async function authorizeAppleMusic(importId: string) {
+export async function authorizeAppleMusic() {
   // Get developer token
   console.log("Getting token...");
   const response = await fetch(`${FUNCTIONS_URL}/token?provider=applemusic`);

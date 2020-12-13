@@ -112,7 +112,7 @@ export class Store {
    * 1. Stores the imported songs in Firestore
    * 2. Redirects to Spotify to authorize the user
    */
-  async saveAndAuthorizeForImport(provider: MusicProvider) {
+  async saveAndAuthorizeForImport(provider: MusicProvider, navigation: any) {
     runInAction(() => {
       this.mutableImportStatus.set({
         isLoading: true,
@@ -133,7 +133,7 @@ export class Store {
           authorizeSpotify(id, true);
           break;
         case "applemusic":
-          await authorizeAppleMusic(id);
+          this.importToAppleMusic(id, provider, navigation);
           break;
         default:
           throw new Error(`Provider not supported: "${provider.id}"`);
@@ -150,6 +150,27 @@ export class Store {
         });
       });
     }
+  }
+
+  async importToAppleMusic(
+    importId: string,
+    provider: MusicProvider,
+    navigation: any
+  ) {
+    try {
+      await authorizeAppleMusic();
+    } catch (error) {
+      analytics.logEvent("authorize_failure", {
+        importId,
+        provider: provider.id,
+        error,
+      });
+      return;
+    }
+
+    // TODO store
+
+    navigation.navigate("applemusic-import");
   }
 
   /**

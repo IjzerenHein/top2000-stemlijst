@@ -11,16 +11,10 @@ import { License } from "../components/License";
 import { t } from "../i18n";
 import { useMusicProvider } from "../providers";
 
-export default observer(function ImportScreen(props: { queryParams: any }) {
+export default observer(function ImportScreen() {
   const { songs, importStatus } = store;
   const { isLoading, error, playlistUrl } = importStatus;
-
   const provider = useMusicProvider();
-
-  React.useEffect(() => {
-    history.replaceState("", document.title, `/${provider.id}`);
-    store.importFromAuthorizationCallback(props.queryParams, provider);
-  }, []);
 
   let text = "";
   if (error) {

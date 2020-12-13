@@ -1,7 +1,9 @@
 import { useRoute } from "@react-navigation/native";
 
+export type ProviderId = "spotify" | "applemusic";
+
 export interface MusicProvider {
-  readonly id: string;
+  readonly id: ProviderId;
   readonly name: string;
   readonly image: any;
 }
@@ -19,9 +21,11 @@ export const providers: MusicProvider[] = [
   },
 ];
 
+export function getProvider(providerId: string) {
+  return providers.find((provider) => provider.id === providerId);
+}
+
 export function useMusicProvider() {
   const route = useRoute();
-  return (
-    providers.find((provider) => provider.id === route.name) || providers[0]
-  );
+  return getProvider(route.name) || providers[0];
 }
