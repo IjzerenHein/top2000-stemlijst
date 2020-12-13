@@ -4,6 +4,7 @@ import { IconButton } from "react-native-paper";
 import { useLinkTo } from "@react-navigation/native";
 
 import { Colors } from "../theme";
+import { store } from "../store";
 
 export default function HomeButton() {
   const linkTo = useLinkTo();
@@ -14,7 +15,7 @@ export default function HomeButton() {
         color={Colors.top2000Red}
         size={30}
         onPress={() => {
-          console.log("HOME");
+          store.reset();
           linkTo("/");
         }}
       />

@@ -38,6 +38,21 @@ export class Store {
     isLoading: false,
   });
 
+  reset() {
+    runInAction(() => {
+      this.mutableSources.replace([]);
+      this.mutableAddSourceStatus.set({
+        isLoading: false,
+        error: undefined,
+      });
+      this.mutableImportStatus.set({
+        isLoading: false,
+        error: undefined,
+        playlistUrl: undefined,
+      });
+    });
+  }
+
   async addSource(url: string, provider: MusicProvider) {
     runInAction(() => {
       this.mutableAddSourceStatus.set({
