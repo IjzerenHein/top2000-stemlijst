@@ -1,5 +1,3 @@
-import { FUNCTIONS_URL } from "../config";
-
 const BASE_URL = "https://api.music.apple.com/v1";
 
 export type AppleMusicAuth = {
