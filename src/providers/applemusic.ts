@@ -76,5 +76,9 @@ export async function createAppleMusicPlaylist(
     "POST"
   );
   const id = json.data[0].id;
-  return `https://music.apple.com/library/playlist/${id}`;
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    return `https://music.apple.com/library`;
+  } else {
+    return `https://music.apple.com/library/playlist/${id}`;
+  }
 }
