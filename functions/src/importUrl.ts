@@ -22,13 +22,14 @@ export const importUrl = functions.https.onRequest(
 
     let source: Source | undefined;
     let error: Error | undefined;
+    let token: string | undefined;
     try {
       source = getSourceFromURL(url as string, provider);
       if (!source) {
         throw new ArgumentError("Link word niet herkend");
       }
-      await source.fetch();
-      await source.resolveSongIds(provider);
+      await source.fetchSourceData();
+      token = await source.fetchProviderData(provider);
     } catch (err) {
       error = err;
     }
@@ -44,6 +45,7 @@ export const importUrl = functions.https.onRequest(
             songs: source.data.songs,
           }
         : {}),
+      ...(token ? { token } : {}),
       ...(error ? { error: error.message } : {}),
     });
 

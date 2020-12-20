@@ -25,6 +25,10 @@ export type SourceData<T = any> = {
   songs: Song[];
 };
 
+type SourceProviderCache = {
+  token?: string;
+};
+
 export class Source<T = any> {
   private _data: SourceData<T>;
 
@@ -36,7 +40,7 @@ export class Source<T = any> {
     return this._data;
   }
 
-  async fetch() {
+  async fetchSourceData() {
     const newData = await this.data.fetch(this._data);
     this._data = {
       ...this._data,
@@ -48,7 +52,7 @@ export class Source<T = any> {
     provider: ProviderId,
     title: string,
     artist: string,
-    cache: any
+    cache: SourceProviderCache
   ): Promise<{
     id: string;
     imageUrl?: string;
@@ -57,21 +61,16 @@ export class Source<T = any> {
       case "spotify":
         return getSpotifySongData(title, artist);
       case "applemusic":
-        cache.appleMusicDeveloperToken =
-          cache.appleMusicDeveloperToken || getAppleMusicDeveloperToken();
-        return getAppleMusicSongData(
-          cache.appleMusicDeveloperToken!,
-          title,
-          artist
-        );
+        cache.token = cache.token || getAppleMusicDeveloperToken();
+        return getAppleMusicSongData(cache.token, title, artist);
         break;
       default:
         throw new Error("Provider not supported");
     }
   }
 
-  async resolveSongIds(provider: ProviderId) {
-    const cache: any = {};
+  async fetchProviderData(provider: ProviderId): Promise<string | undefined> {
+    const cache: SourceProviderCache = {};
     const songs = await Promise.all(
       this._data.songs.map(async (song) => {
         if (song.id) {
@@ -122,5 +121,6 @@ export class Source<T = any> {
       ...this._data,
       songs,
     };
+    return cache.token;
   }
 }

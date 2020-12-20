@@ -23,7 +23,13 @@ import {
   createAppleMusicPlaylist,
 } from "../providers/applemusic";
 
-type Status = {
+type AddSourceStatus = {
+  isLoading: boolean;
+  error?: Error;
+  token?: string;
+};
+
+type ImportStatus = {
   isLoading: boolean;
   error?: Error;
   playlistUrl?: string;
@@ -31,10 +37,10 @@ type Status = {
 
 export class Store {
   private mutableSources = observable<Source>([]);
-  private mutableAddSourceStatus = observable.box<Status>({
+  private mutableAddSourceStatus = observable.box<AddSourceStatus>({
     isLoading: false,
   });
-  private mutableImportStatus = observable.box<Status>({
+  private mutableImportStatus = observable.box<ImportStatus>({
     isLoading: false,
   });
 
@@ -44,6 +50,7 @@ export class Store {
       this.mutableAddSourceStatus.set({
         isLoading: false,
         error: undefined,
+        token: undefined,
       });
       this.mutableImportStatus.set({
         isLoading: false,
@@ -66,16 +73,17 @@ export class Store {
           provider.id
         }`
       );
-      const json: any = await response.json();
-      if (json.error) {
-        throw new Error(json.error);
+      const { error, token, ...rest } = await response.json();
+      if (error) {
+        throw new Error(error);
       }
-      const sourceData: SourceData = json;
+      const sourceData: SourceData = rest;
       const source = new Source(sourceData);
       runInAction(() => {
         this.mutableSources.push(source);
         this.mutableAddSourceStatus.set({
           isLoading: false,
+          token,
         });
       });
       analytics.logEvent("import_url", {
@@ -102,7 +110,7 @@ export class Store {
     }
   }
 
-  get addSourceStatus(): Status {
+  get addSourceStatus(): AddSourceStatus {
     return this.mutableAddSourceStatus.get();
   }
 
@@ -138,29 +146,24 @@ export class Store {
       });
     });
     try {
-      const data = this.toJSON();
-      const { id } = await firestore.collection("imports").add(data);
-      analytics.logEvent("save_import", {
-        importId: id,
-        provider: provider.id,
-        sources: data.sources.length,
-        songs: data.songs.length,
-      });
+      let playlistUrl: string;
       switch (provider.id) {
         case "spotify":
-          authorizeSpotify(id, true);
+          playlistUrl = await this.importToSpotify(provider);
           break;
         case "applemusic":
-          this.importToAppleMusic(id, provider, linkTo);
+          playlistUrl = await this.importToAppleMusic(provider, linkTo);
           break;
         default:
           throw new Error(`Provider not supported: "${provider.id}"`);
       }
-    } catch (error) {
-      analytics.logEvent("save_failure", {
-        error: error.message,
-        provider: provider.id,
+      runInAction(() => {
+        this.mutableImportStatus.set({
+          isLoading: false,
+          playlistUrl,
+        });
       });
+    } catch (error) {
       runInAction(() => {
         this.mutableImportStatus.set({
           isLoading: false,
@@ -170,31 +173,64 @@ export class Store {
     }
   }
 
-  async importToAppleMusic(
-    importId: string,
-    provider: MusicProvider,
-    linkTo: any
-  ) {
+  async saveImportData(provider: MusicProvider): Promise<string> {
+    try {
+      const data = this.toJSON();
+      const { id } = await firestore.collection("imports").add(data);
+      analytics.logEvent("save_import", {
+        importId: id,
+        provider: provider.id,
+        sources: data.sources.length,
+        songs: data.songs.length,
+      });
+      return id;
+    } catch (error) {
+      analytics.logEvent("save_failure", {
+        error: error.message,
+        provider: provider.id,
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Saves the import data and authorizes Spotify.
+   * The promise of this function never resolves, but instead
+   * a new web page is opened in which the user can authorize
+   * Spotify. After succesful authorization, the web-browser
+   * is redirected back to this app, after which it continues
+   * the import to Spotify process (importFromAuthorizationCallback)
+   */
+  async importToSpotify(provider: MusicProvider): Promise<string> {
+    const importId = await this.saveImportData(provider);
+    return new Promise(() => authorizeSpotify(importId, true));
+  }
+
+  /**
+   * 1. Authorizes Apple Music (this needs to be the first action
+   *    that is performed because it opens a popup, which is only
+   *    allowed when executed from a user event.
+   * 2. Imports data
+   * 3. Navigate to import screen
+   * 4. Create the playlist in Apple Music
+   */
+  async importToAppleMusic(provider: MusicProvider, linkTo: any) {
     // Authorize
     let auth: AppleMusicAuth;
     try {
-      auth = await authorizeAppleMusic();
+      auth = await authorizeAppleMusic(
+        this.mutableAddSourceStatus.get().token!
+      );
     } catch (error) {
       analytics.logEvent("authorize_failure", {
-        importId,
         provider: provider.id,
         error,
       });
-      runInAction(() => {
-        this.mutableImportStatus.set({
-          isLoading: false,
-          error: new Error(
-            t("$1 authorisatie mislukt ($2)", provider.name, error)
-          ),
-        });
-      });
-      return;
+      throw new Error(t("$1 authorisatie mislukt ($2)", provider.name, error));
     }
+
+    // Save import data
+    const importId = await this.saveImportData(provider);
 
     // Show import screen
     linkTo(`/${provider.id}/import`);
@@ -218,26 +254,14 @@ export class Store {
         songs: docData.songs.length,
       });
 
-      // All done
-      runInAction(() => {
-        this.mutableImportStatus.set({
-          isLoading: false,
-          playlistUrl,
-        });
-      });
+      return playlistUrl;
     } catch (error) {
       analytics.logEvent("create_playlist_failure", {
         importId,
         provider: provider.id,
         error,
       });
-      runInAction(() => {
-        this.mutableImportStatus.set({
-          isLoading: false,
-          error,
-        });
-      });
-      return;
+      throw error;
     }
   }
 
@@ -351,7 +375,7 @@ export class Store {
     }
   }
 
-  get importStatus(): Status {
+  get importStatus(): ImportStatus {
     return this.mutableImportStatus.get();
   }
 

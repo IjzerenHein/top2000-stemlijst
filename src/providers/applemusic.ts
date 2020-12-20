@@ -7,15 +7,9 @@ export type AppleMusicAuth = {
   userToken: string;
 };
 
-export async function authorizeAppleMusic(): Promise<AppleMusicAuth> {
-  // Get developer token
-  const response = await fetch(`${FUNCTIONS_URL}/token?provider=applemusic`);
-  const json: any = await response.json();
-  if (json.error) {
-    throw new Error(json.error);
-  }
-  const developerToken = json.token;
-
+export async function authorizeAppleMusic(
+  developerToken: string
+): Promise<AppleMusicAuth> {
   // Configure
   // @ts-ignore
   const music = MusicKit.configure({
