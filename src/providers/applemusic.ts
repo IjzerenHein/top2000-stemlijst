@@ -77,7 +77,9 @@ export async function createAppleMusicPlaylist(
   );
   const id = json.data[0].id;
   if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-    return `https://music.apple.com/library`;
+    // Opening the full playlist URL shows a "An error occured" page
+    // in the Browser section of the Mobile app.
+    return `https://music.apple.com`;
   } else {
     return `https://music.apple.com/library/playlist/${id}`;
   }
