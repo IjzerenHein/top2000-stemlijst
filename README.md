@@ -1,6 +1,6 @@
 # Top 2000 Stemlijst
 
-Importeer jouw Top 2000 stemlijst eenvoudig naar Spotify
+Importeer jouw Top 2000 stemlijst eenvoudig naar Spotify, Apple Music of Deezer
 
 https://top2000stemlijst.nl
 
