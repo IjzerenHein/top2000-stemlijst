@@ -22,7 +22,7 @@ import {
   authorizeAppleMusic,
   createAppleMusicPlaylist,
 } from "../providers/applemusic";
-import { authorizeDeezer, getDeezerAccessToken } from "../providers/deezer";
+import { authorizeDeezer, createDeezerPlaylist } from "../providers/deezer";
 
 type AddSourceStatus = {
   isLoading: boolean;
@@ -357,8 +357,13 @@ export class Store {
       } else if (provider.id === "deezer") {
         // Get access token
         console.log("GETTING ACCESS TOKEN: ", queryParams.code);
-        const accessToken = await getDeezerAccessToken(queryParams.code!);
-        console.log("ACCESS_TOKEN", accessToken);
+        const playlistName = sources[0].title;
+        const data = await createDeezerPlaylist(
+          queryParams.code,
+          playlistName,
+          docData.songs.map((song) => song.id!)
+        );
+        console.log("CREATED: ", data);
 
         throw new Error("Deezer not yet supported");
       } else {

@@ -21,15 +21,17 @@ export const getToken = functions.https.onRequest(async (request, response) => {
         });
       }
       break;
-    case "deezer": {
-      const { code } = request.query;
-      const { access_token } = await getDeezerAccessToken(code as string);
-      response.send({
-        provider: "deezer",
-        token: access_token,
-        // TODO expires in?
-      });
-    }
+    case "deezer":
+      {
+        const { code } = request.query;
+        const { access_token } = await getDeezerAccessToken(code as string);
+        response.send({
+          provider: "deezer",
+          token: access_token,
+          // TODO expires in?
+        });
+      }
+      break;
     default:
       throw new ArgumentError("Invalid provider");
   }

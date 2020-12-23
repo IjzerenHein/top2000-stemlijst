@@ -1,2 +1,5 @@
 export * from "./importUrl";
-export { getToken as token } from "./getToken";
+export * from "./createPlaylist";
+
+// GET TOKEN IS NOT USED SO HAS BEEN DISABLED
+// export { getToken as token } from "./getToken";
