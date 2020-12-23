@@ -44,18 +44,15 @@ export async function getDeezerSongData(
 async function deezerAPIFetch<T = any>(
   accessToken: string,
   path: string,
-  body?: any,
+  queryParams: object,
   method?: "GET" | "PUT" | "POST"
 ): Promise<T> {
-  console.log("ACCESSTOKEN: ", accessToken);
-  const response = await fetch(`https://api.deezer.com${path}`, {
-    method: method ?? "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
+  const url = `https://api.deezer.com${path}?access_token=${accessToken}&request_method=${method?.toLowerCase()}&output_method=json&${Object.entries(
+    queryParams
+  )
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join("&")}`;
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error(response.statusText);
   }
@@ -69,30 +66,28 @@ async function deezerAPIFetch<T = any>(
 export async function createDeezerPlaylist(
   accessToken: string,
   title: string,
+  _isPublic: boolean,
   songIds: string
-): Promise<{ id: string }> {
-  // Get user id
-  // const user = await deezerAPIFetch(accessToken, "/user/me?output=json");
-  // console.log("USER", user);
-  // const user = {id: 'me'}
-
+): Promise<{ id: string; url: string }> {
   // Create playlist
   const playlist = await deezerAPIFetch(
     accessToken,
-    `/user/me/playlists?output=json`,
+    `/user/me/playlists`,
     { title },
     "POST"
   );
-  console.log("PLAYLIST", playlist);
+  // TODO: isPublic
 
   // Add tracks to playlist
-  const result = await deezerAPIFetch(
+  await deezerAPIFetch(
     accessToken,
-    `/playlist/${playlist.id}/tracks?output=json`,
+    `/playlist/${playlist.id}/tracks`,
     { songs: songIds },
     "POST"
   );
-  console.log("RESULT", result);
 
-  return { id: playlist.id };
+  return {
+    id: playlist.id,
+    url: `https://www.deezer.com/playlist/${playlist.id}`,
+  };
 }

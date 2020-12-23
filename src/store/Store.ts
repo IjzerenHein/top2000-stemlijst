@@ -355,17 +355,13 @@ export class Store {
           docData.songs.map((song) => song.id!)
         );
       } else if (provider.id === "deezer") {
-        // Get access token
-        console.log("GETTING ACCESS TOKEN: ", queryParams.code);
         const playlistName = sources[0].title;
-        const data = await createDeezerPlaylist(
+        playlistUrl = await createDeezerPlaylist(
           queryParams.code,
           playlistName,
+          false,
           docData.songs.map((song) => song.id!)
         );
-        console.log("CREATED: ", data);
-
-        throw new Error("Deezer not yet supported");
       } else {
         throw new Error("Provider not supported");
       }

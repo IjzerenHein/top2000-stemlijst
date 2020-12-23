@@ -13,21 +13,10 @@ export function authorizeDeezer(importId: string) {
   window.location.href = url;
 }
 
-/*
-export async function getDeezerAccessToken(code: string): Promise<string> {
-  const response = await fetch(
-    `${config.FUNCTIONS_URL}/token?provider=deezer&code=${code}`
-  );
-  const json: any = await response.json();
-  if (json.error) {
-    throw new Error(json.error);
-  }
-  return json.token;
-}*/
-
 export async function createDeezerPlaylist(
   code: string,
   title: string,
+  isPublic: boolean,
   songIds: string[]
 ): Promise<string> {
   const response = await fetch(
@@ -35,11 +24,11 @@ export async function createDeezerPlaylist(
       config.FUNCTIONS_URL
     }/createPlaylist?provider=deezer&code=${code}&title=${encodeURIComponent(
       title
-    )}&songs=${encodeURIComponent(songIds.join(","))}`
+    )}&public=${isPublic}&songs=${encodeURIComponent(songIds.join(","))}`
   );
   const json: any = await response.json();
   if (json.error) {
     throw new Error(json.error);
   }
-  return json;
+  return json.url;
 }

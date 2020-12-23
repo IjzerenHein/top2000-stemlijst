@@ -13,16 +13,18 @@ export const createPlaylist = functions.https.onRequest(
     switch (provider) {
       case "deezer":
         {
-          const { code, title, songIds } = request.query;
+          const { code, title, songs, public: isPublic } = request.query;
           const { access_token } = await getDeezerAccessToken(code as string);
           const data = await createDeezerPlaylist(
             access_token,
             title as string,
-            songIds as string
+            isPublic === "true",
+            songs as string
           );
           response.send({
             provider,
             id: data.id,
+            url: data.url,
           });
         }
         break;
