@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import { Colors } from "../theme";
 
-export type ProviderId = "spotify" | "applemusic";
+export type ProviderId = "spotify" | "applemusic" | "deezer";
 
 export type MusicProvider = {
   id: ProviderId;
@@ -22,6 +22,12 @@ export const providers: MusicProvider[] = [
     name: "Apple Music",
     image: require("../../assets/apple-music.png"),
     color: Colors.appleMusicRed,
+  },
+  {
+    id: "deezer",
+    name: "Deezer",
+    image: require("../../assets/deezer.png"),
+    color: Colors.deezerBlack,
   },
 ];
 

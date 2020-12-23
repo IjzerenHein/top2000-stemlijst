@@ -16,6 +16,7 @@ export const Colors = {
   top2000Red: "#e91700",
   spotifyGreen: "#1DB954",
   appleMusicRed: "#fa233b",
+  deezerBlack: "#000000",
   black: "#191414",
 };
 

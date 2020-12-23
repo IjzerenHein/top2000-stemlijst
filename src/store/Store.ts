@@ -22,6 +22,7 @@ import {
   authorizeAppleMusic,
   createAppleMusicPlaylist,
 } from "../providers/applemusic";
+import { authorizeDeezer, getDeezerAccessToken } from "../providers/deezer";
 
 type AddSourceStatus = {
   isLoading: boolean;
@@ -154,6 +155,9 @@ export class Store {
         case "applemusic":
           playlistUrl = await this.importToAppleMusic(provider, linkTo);
           break;
+        case "deezer":
+          playlistUrl = await this.importToDeezer(provider);
+          break;
         default:
           throw new Error(`Provider not supported: "${provider.id}"`);
       }
@@ -197,13 +201,26 @@ export class Store {
    * Saves the import data and authorizes Spotify.
    * The promise of this function never resolves, but instead
    * a new web page is opened in which the user can authorize
-   * Spotify. After succesful authorization, the web-browser
+   * the music server. After succesful authorization, the web-browser
    * is redirected back to this app, after which it continues
-   * the import to Spotify process (importFromAuthorizationCallback)
+   * the import process (importFromAuthorizationCallback)
    */
   async importToSpotify(provider: MusicProvider): Promise<string> {
     const importId = await this.saveImportData(provider);
     return new Promise(() => authorizeSpotify(importId, true));
+  }
+
+  /**
+   * Saves the import data and authorizes Deezer.
+   * The promise of this function never resolves, but instead
+   * a new web page is opened in which the user can authorize
+   * the music server. After succesful authorization, the web-browser
+   * is redirected back to this app, after which it continues
+   * the import process (importFromAuthorizationCallback)
+   */
+  async importToDeezer(provider: MusicProvider): Promise<string> {
+    const importId = await this.saveImportData(provider);
+    return new Promise(() => authorizeDeezer(importId));
   }
 
   /**
@@ -273,17 +290,11 @@ export class Store {
    * 5. Updates playlist url
    */
   async importFromAuthorizationCallback(
-    queryParams: any,
-    provider: MusicProvider
+    provider: MusicProvider,
+    importId: string | undefined,
+    error: string | undefined,
+    queryParams: any
   ) {
-    const {
-      access_token,
-      state: importId,
-      error,
-      /* token_type,
-      expires_in, */
-    } = queryParams;
-
     if (error) {
       analytics.logEvent("authorize_failure", {
         importId,
@@ -294,7 +305,7 @@ export class Store {
         this.mutableImportStatus.set({
           isLoading: false,
           error: new Error(
-            t("$1 authorisatie mislukt ($2)", provider.name, error)
+            t("$1 authorisatie mislukt ($2)", provider.name, error!)
           ),
         });
       });
@@ -323,12 +334,14 @@ export class Store {
       let playlistUrl: string;
       if (provider.id === "spotify") {
         // Get user-id for which to create a playlist
-        const userProfile = await getSpotifyUserProfile(access_token);
+        const userProfile = await getSpotifyUserProfile(
+          queryParams.access_token
+        );
 
         // Create playlist
         const playlistName = sources[0].title;
         const playlist = await createSpotifyPlaylist(
-          access_token,
+          queryParams.access_token,
           userProfile.id,
           playlistName,
           false
@@ -337,10 +350,17 @@ export class Store {
 
         // Add tracks to playlist
         await addSpotifyPlaylistTracks(
-          access_token,
+          queryParams.access_token,
           playlist.id,
           docData.songs.map((song) => song.id!)
         );
+      } else if (provider.id === "deezer") {
+        // Get access token
+        console.log("GETTING ACCESS TOKEN: ", queryParams.code);
+        const accessToken = await getDeezerAccessToken(queryParams.code!);
+        console.log("ACCESS_TOKEN", accessToken);
+
+        throw new Error("Deezer not yet supported");
       } else {
         throw new Error("Provider not supported");
       }
@@ -361,6 +381,7 @@ export class Store {
         });
       });
     } catch (error) {
+      console.error(error);
       analytics.logEvent("create_playlist_failure", {
         importId,
         provider: provider.id,
