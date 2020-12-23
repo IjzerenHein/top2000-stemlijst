@@ -1,10 +1,11 @@
 import type { Song } from "../types";
+import type { ProviderId } from "../providers";
 import { getSpotifySongData } from "../providers/spotify";
 import {
   getAppleMusicDeveloperToken,
   getAppleMusicSongData,
 } from "../providers/applemusic";
-import type { ProviderId } from "../providers";
+import { getDeezerSongData } from "../providers/deezer";
 
 export type PartialSourceData<T = any> = {
   name?: string;
@@ -63,9 +64,10 @@ export class Source<T = any> {
       case "applemusic":
         cache.token = cache.token || getAppleMusicDeveloperToken();
         return getAppleMusicSongData(cache.token, title, artist);
-        break;
+      case "deezer":
+        return getDeezerSongData(title, artist);
       default:
-        throw new Error("Provider not supported");
+        throw new Error(`Provider not supported: ${provider}`);
     }
   }
 
