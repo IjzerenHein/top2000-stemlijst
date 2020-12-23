@@ -5,7 +5,7 @@ import { Headline, Caption as PaperCaption, Text } from "react-native-paper";
 import { Colors } from "../theme";
 
 export function Heading(props: React.ComponentProps<typeof Headline>) {
-  return <Headline {...props} />;
+  return <Headline {...props} style={styles.heading} />;
 }
 
 export function Caption(props: React.ComponentProps<typeof PaperCaption>) {
@@ -19,6 +19,10 @@ export function ErrorText(props: { visible: boolean; label?: string }) {
 }
 
 const styles = StyleSheet.create({
+  heading: {
+    fontFamily: `Baloo, "Helvetica Neue", Helvetica, Arial, sans-serif`,
+    fontWeight: "600",
+  },
   error: {
     color: Colors.red,
     fontSize: 16,

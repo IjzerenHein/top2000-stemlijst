@@ -1,4 +1,4 @@
-import { DefaultTheme } from "react-native-paper";
+import { DefaultTheme, configureFonts } from "react-native-paper";
 
 /* export const Colors = {
   background: "#000",
@@ -20,6 +20,22 @@ export const Colors = {
   black: "#191414",
 };
 
+/*
+const fontFamily = `Baloo, "Helvetica Neue", Helvetica, Arial, sans-serif`;
+const fontWeight = "600";
+const font = {
+  fontFamily,
+  fontWeight,
+};
+const fontConfig = {
+  web: {
+    regular: font,
+    medium: font,
+    //light: font,
+    //thin: font,
+  },
+}; */
+
 export const PaperTheme = {
   ...DefaultTheme,
   colors: {
@@ -27,4 +43,5 @@ export const PaperTheme = {
     primary: Colors.green,
     // accent: 'yellow',
   },
+  // fonts: configureFonts(fontConfig as any),
 };
