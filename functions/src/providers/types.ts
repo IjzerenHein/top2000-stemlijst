@@ -1,1 +1,1 @@
-export type ProviderId = "spotify" | "applemusic";
+export type ProviderId = "spotify" | "applemusic" | "deezer";

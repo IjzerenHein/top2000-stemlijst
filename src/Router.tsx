@@ -33,12 +33,32 @@ let { path, queryParams } = Linking.parse(
   )
 );
 
+console.log("PATH: ", path, queryParams);
+
 let App: any;
 if (path === "spotify/authorize-createplaylist") {
   const provider = getProvider("spotify");
   path = `/${provider.id}/import`;
   history.replaceState("", document.title, path);
-  store.importFromAuthorizationCallback(queryParams, provider);
+  store.importFromAuthorizationCallback(
+    provider,
+    queryParams?.state as string,
+    queryParams?.error,
+    queryParams
+  );
+} else if (path === "deezer/authorize-createplaylist") {
+  const importId = localStorage.getItem("nl.top2000stemlijst.deezer.importId");
+  localStorage.removeItem("nl.top2000stemlijst.deezer.importId");
+  console.log("IMPORT ID ", importId);
+  const provider = getProvider("deezer");
+  path = `/${provider.id}/import`;
+  history.replaceState("", document.title, path);
+  store.importFromAuthorizationCallback(
+    provider,
+    importId || undefined,
+    queryParams?.error_reason,
+    queryParams
+  );
 } else if (path?.includes("/import")) {
   path = path.replace("/import", "");
   history.replaceState("", document.title, path);

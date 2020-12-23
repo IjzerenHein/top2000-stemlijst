@@ -63,12 +63,14 @@ const styles = StyleSheet.create({
   },
   providerContainer: {
     flexDirection: "column",
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 10,
     alignItems: "center",
   },
   providerImage: {
     width: 96,
     height: 96,
     resizeMode: "contain",
+    marginBottom: 10,
   },
 });
