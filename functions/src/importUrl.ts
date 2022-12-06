@@ -30,7 +30,7 @@ export const importUrl = functions.https.onRequest(
       }
       await source.fetchSourceData();
       token = await source.fetchProviderData(provider);
-    } catch (err) {
+    } catch (err: any) {
       error = err;
     }
 

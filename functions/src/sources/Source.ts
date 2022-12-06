@@ -7,6 +7,7 @@ import {
 } from "../providers/applemusic";
 import { getDeezerSongData } from "../providers/deezer";
 
+// eslint-disable-next-line no-unused-vars
 export type PartialSourceData<T = any> = {
   name?: string;
   title?: string;
@@ -16,6 +17,7 @@ export type PartialSourceData<T = any> = {
 };
 
 export type SourceData<T = any> = {
+  // eslint-disable-next-line no-unused-vars
   fetch: (sourceData: SourceData<T>) => Promise<PartialSourceData<T>>;
   url: string;
   name: string;

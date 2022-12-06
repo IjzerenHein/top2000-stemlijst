@@ -20,11 +20,11 @@ export function getSourceFromURL(
   // eg. https://stem.nporadio2.nl/top2000-2020/share/cc87893480d6ebf4741784b2b95ee3d411711b53
   // or 2019 https://stem.nporadio2.nl/top-2000/share/e7e3efde0d8d6a92c0fccac24248325e84f137af
   const matchWithYear = url.match(
-    /^https\:\/\/stem.nporadio2.nl\/top2000-(\d+)\/share\/(.*)$/
+    /^https:\/\/stem.nporadio2.nl\/top2000-(\d+)\/share\/(.*)$/
   );
   if (!matchWithYear) {
     const matchWithoutYear = url.match(
-      /^https\:\/\/stem.nporadio2.nl\/top-2000\/share\/(.*)$/
+      /^https:\/\/stem.nporadio2.nl\/top-2000\/share\/(.*)$/
     );
     if (matchWithoutYear) {
       customFields.year = 2019;
@@ -65,7 +65,7 @@ export function getSourceFromURL(
         const spotifyTrackIdMatch =
           provider === "spotify"
             ? audio?.match(
-                /^https\:\/\/stem-backend.npo.nl(\/+)storage\/preview\/(\d+)\/spotify-([a-zA-Z0-9]+)\./
+                /^https:\/\/stem-backend.npo.nl(\/+)storage\/preview\/(\d+)\/spotify-([a-zA-Z0-9]+)\./
               )
             : undefined;
         // TODO: read deezer url from audio  link

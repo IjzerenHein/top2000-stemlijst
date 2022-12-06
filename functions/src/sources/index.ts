@@ -2,6 +2,7 @@ import type { ProviderId } from "../providers";
 import { Source } from "./Source";
 
 interface SupportedSource {
+  // eslint-disable-next-line no-unused-vars
   getSourceFromURL(url: string, provider: ProviderId): Source | undefined;
 }
 

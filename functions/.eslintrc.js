@@ -1,23 +1,23 @@
 module.exports = {
   env: {
-    browser: true,
     es6: true,
     node: true,
   },
   extends: [
+    "eslint:recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: "tsconfig.json",
+    project: ["tsconfig.json", "tsconfig.dev.json"],
     sourceType: "module",
   },
-  plugins: [
-    "@typescript-eslint",
-    "import",
+  ignorePatterns: [
+    "/lib/**/*", // Ignore built files.
   ],
+  plugins: ["@typescript-eslint", "import"],
   rules: {
     "@typescript-eslint/adjacent-overload-signatures": "error",
     "@typescript-eslint/no-empty-function": "error",
