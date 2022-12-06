@@ -6,6 +6,11 @@ import type { ProviderId } from "../providers";
 
 const TITLE = "Top 2000 Stemlijst";
 
+function isValidName(name: string) {
+  const isId = name.length === 32 && name.match(/^[0-9a-f]+$/);
+  return name && !isId;
+}
+
 export function getSourceFromURL(
   url: string,
   provider: ProviderId
@@ -79,7 +84,7 @@ export function getSourceFromURL(
       });
       return {
         songs,
-        title: `${TITLE} van ${name} (${year})`,
+        title: `${TITLE}${isValidName(name) ? ` van ${name}` : ""} (${year})`,
       };
     },
     url,
