@@ -10,8 +10,7 @@ export function License() {
           Deze website
         </a>{" "}
         is niet gelieerd aan NPO Radio 2 en is mogelijk gemaakt door{" "}
-        <a href="https://github.com/IjzerenHein">IjzerenHein</a> en{" "}
-        <a href="https://www.expo.io">Expo</a>.
+        <a href="https://www.ijzerenhein.nl">IjzerenHein</a>.
       </Text>
     </View>
   );
