@@ -33,7 +33,7 @@ let { path, queryParams } = Linking.parse(
   )
 );
 
-console.log("PATH: ", path, queryParams);
+// console.log("PATH: ", path, queryParams);
 
 let App: any;
 if (path === "spotify/authorize-createplaylist") {
