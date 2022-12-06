@@ -3,6 +3,7 @@ import { StyleSheet, View, Image, TouchableHighlight } from "react-native";
 import { observer } from "mobx-react";
 import { useLinkTo } from "@react-navigation/native";
 
+import { store } from "../store";
 import { Colors } from "../theme";
 import { providers } from "../providers";
 import { Heading, Caption } from "../components/Text";
@@ -22,7 +23,10 @@ export default observer(function HomeScreen() {
             key={provider.id}
             style={styles.button}
             underlayColor={Colors.panel}
-            onPress={() => linkTo("/" + provider.id)}
+            onPress={() => {
+              store.reset();
+              linkTo("/" + provider.id);
+            }}
           >
             <View style={styles.providerContainer}>
               <Image style={styles.providerImage} source={provider.image} />
