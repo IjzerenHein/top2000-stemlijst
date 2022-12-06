@@ -43,7 +43,7 @@ if (path === "spotify/authorize-createplaylist") {
   store.importFromAuthorizationCallback(
     provider,
     queryParams?.state as string,
-    queryParams?.error,
+    queryParams?.error as string,
     queryParams
   );
 } else if (path === "deezer/authorize-createplaylist") {
@@ -56,7 +56,7 @@ if (path === "spotify/authorize-createplaylist") {
   store.importFromAuthorizationCallback(
     provider,
     importId || undefined,
-    queryParams?.error_reason,
+    queryParams?.error_reason as string,
     queryParams
   );
 } else if (path?.includes("/import")) {
@@ -68,7 +68,10 @@ const Stack = createStackNavigator();
 
 export default () => (
   <NavigationContainer linking={linking}>
-    <Stack.Navigator initialRouteName={path || ""} headerMode="none">
+    <Stack.Navigator
+      initialRouteName={path || ""}
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen
         name="Home"
         component={HomeScreen}

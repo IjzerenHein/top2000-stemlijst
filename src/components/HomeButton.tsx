@@ -12,7 +12,7 @@ export default function HomeButton() {
     <View style={styles.container}>
       <IconButton
         icon="arrow-left"
-        color={Colors.top2000Red}
+        iconColor={Colors.top2000Red}
         size={30}
         onPress={() => {
           store.reset();

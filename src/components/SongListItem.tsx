@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { List } from "react-native-paper";
 
 import { Song } from "../store";

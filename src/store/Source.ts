@@ -1,4 +1,4 @@
-import { IObservableArray, IObservableValue, observable } from "mobx";
+import { IObservableArray, IObservableValue, observable, toJS } from "mobx";
 
 import { Song } from "./Song";
 import type { SourceData } from "./types";
@@ -31,7 +31,7 @@ export class Source {
   }
 
   get songs(): Song[] {
-    return this.mutableSongs.toJS();
+    return toJS(this.mutableSongs);
   }
 
   get failedSongs(): Song[] {

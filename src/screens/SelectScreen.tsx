@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 import { Colors } from "../theme";
 import { store } from "../store";
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+    maxHeight: "100vh",
     // @ts-ignore
     overflowY: "hidden",
   },

@@ -1,4 +1,4 @@
-import { observable, computed, decorate } from "mobx";
+import { observable, computed, makeObservable, toJS } from "mobx";
 import { runInAction } from "mobx";
 import * as Linking from "expo-linking";
 import uniqBy from "lodash.uniqby";
@@ -6,7 +6,15 @@ import uniqBy from "lodash.uniqby";
 import { Song } from "./Song";
 import { Source } from "./Source";
 import type { SourceData, DocumentData } from "./types";
-import { analytics, firestore } from "../firebase";
+import {
+  analytics,
+  firestore,
+  logEvent,
+  collection,
+  doc,
+  addDoc,
+  getDoc,
+} from "../firebase";
 import { MusicProvider } from "../providers";
 import { t } from "../i18n";
 import { FUNCTIONS_URL } from "../config";
@@ -44,6 +52,12 @@ export class Store {
   private mutableImportStatus = observable.box<ImportStatus>({
     isLoading: false,
   });
+
+  constructor() {
+    makeObservable(this, {
+      songs: computed,
+    });
+  }
 
   reset() {
     runInAction(() => {
@@ -87,7 +101,7 @@ export class Store {
           token,
         });
       });
-      analytics.logEvent("import_url", {
+      logEvent(analytics, "import_url", {
         url,
         provider: provider.id,
         name: sourceData.name,
@@ -96,8 +110,8 @@ export class Store {
           .length,
       });
       return source;
-    } catch (error) {
-      analytics.logEvent("import_failure", {
+    } catch (error: any) {
+      logEvent(analytics, "import_failure", {
         url,
         provider: provider.id,
         error: error.message,
@@ -116,7 +130,7 @@ export class Store {
   }
 
   get sources(): Source[] {
-    return this.mutableSources.toJS();
+    return toJS(this.mutableSources);
   }
 
   get songs(): Song[] {
@@ -167,7 +181,7 @@ export class Store {
           playlistUrl,
         });
       });
-    } catch (error) {
+    } catch (error: any) {
       runInAction(() => {
         this.mutableImportStatus.set({
           isLoading: false,
@@ -180,16 +194,16 @@ export class Store {
   async saveImportData(provider: MusicProvider): Promise<string> {
     try {
       const data = this.toJSON();
-      const { id } = await firestore.collection("imports").add(data);
-      analytics.logEvent("save_import", {
+      const { id } = await addDoc(collection(firestore, "imports"), data);
+      logEvent(analytics, "save_import", {
         importId: id,
         provider: provider.id,
         sources: data.sources.length,
         songs: data.songs.length,
       });
       return id;
-    } catch (error) {
-      analytics.logEvent("save_failure", {
+    } catch (error: any) {
+      logEvent(analytics, "save_failure", {
         error: error.message,
         provider: provider.id,
       });
@@ -238,8 +252,8 @@ export class Store {
       auth = await authorizeAppleMusic(
         this.mutableAddSourceStatus.get().token!
       );
-    } catch (error) {
-      analytics.logEvent("authorize_failure", {
+    } catch (error: any) {
+      logEvent(analytics, "authorize_failure", {
         provider: provider.id,
         error,
       });
@@ -263,7 +277,7 @@ export class Store {
         docData.songs.map((song) => song.id!)
       );
 
-      analytics.logEvent("create_playlist", {
+      logEvent(analytics, "create_playlist", {
         importId,
         provider: provider.id,
         public: false,
@@ -273,7 +287,7 @@ export class Store {
 
       return playlistUrl;
     } catch (error) {
-      analytics.logEvent("create_playlist_failure", {
+      logEvent(analytics, "create_playlist_failure", {
         importId,
         provider: provider.id,
         error,
@@ -296,7 +310,7 @@ export class Store {
     queryParams: any
   ) {
     if (error) {
-      analytics.logEvent("authorize_failure", {
+      logEvent(analytics, "authorize_failure", {
         importId,
         provider: provider.id,
         error,
@@ -320,12 +334,12 @@ export class Store {
     });
     try {
       // Re-initialize store with data
-      const docRef = firestore.collection("imports").doc(importId);
-      const doc = await docRef.get();
-      if (!doc.exists) {
+      const docRef = doc(collection(firestore, "imports"), importId);
+      const docSnapshot = await getDoc(docRef);
+      if (!docSnapshot.exists) {
         throw new Error("Kan import data niet vinden");
       }
-      const docData: DocumentData = doc.data() as any;
+      const docData: DocumentData = docSnapshot.data() as any;
       const sources = docData.sources.map(
         (sourceData) => new Source(sourceData)
       );
@@ -366,7 +380,7 @@ export class Store {
         throw new Error("Provider not supported");
       }
 
-      analytics.logEvent("create_playlist", {
+      logEvent(analytics, "create_playlist", {
         importId,
         provider: provider.id,
         public: false,
@@ -381,9 +395,9 @@ export class Store {
           playlistUrl,
         });
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      analytics.logEvent("create_playlist_failure", {
+      logEvent(analytics, "create_playlist_failure", {
         importId,
         provider: provider.id,
         error,
@@ -407,12 +421,10 @@ export class Store {
       return;
     }
 
-    analytics.logEvent("open_playlist", {
+    logEvent(analytics, "open_playlist", {
       provider: provider.id,
     });
 
     Linking.openURL(playlistUrl);
   }
 }
-
-decorate(Store, { songs: computed });

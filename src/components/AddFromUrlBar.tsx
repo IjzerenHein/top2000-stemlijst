@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { TextInput } from "react-native-paper";
 
 import { Colors } from "../theme";
