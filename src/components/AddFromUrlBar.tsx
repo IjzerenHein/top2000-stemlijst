@@ -37,7 +37,7 @@ export default observer(() => {
         clearButtonMode={text ? "always" : "never"}
         value={text}
         placeholder={
-          "https://stem.nporadio2.nl/top2000-2020/share/" +
+          `https://stem.nporadio2.nl/top2000-${new Date().getFullYear()}/share/` +
           t("{Jouw persoonlijke stem id}")
         }
         onChangeText={setText}
