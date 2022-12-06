@@ -39,7 +39,7 @@ export async function getAppleMusicSongData(
       },
     }
   );
-  const json = await response.json();
+  const json: any = await response.json();
   const data = json.results?.songs?.data?.[0];
   if (!data) {
     throw new Error("Not found");

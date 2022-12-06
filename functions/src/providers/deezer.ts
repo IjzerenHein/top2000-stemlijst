@@ -4,9 +4,7 @@ import * as functions from "firebase-functions";
 const DEEZER_APP_ID = functions.config().deezer.app.id;
 const DEEZER_APP_SECRET = functions.config().deezer.app.secret;
 
-export async function getDeezerAccessToken(
-  code: string
-): Promise<{
+export async function getDeezerAccessToken(code: string): Promise<{
   access_token: string;
   expires: number;
 }> {
@@ -16,7 +14,7 @@ export async function getDeezerAccessToken(
   if (!response.ok) {
     throw new Error("Invalid code");
   }
-  const json = await response.json();
+  const json: any = await response.json();
   return json;
 }
 
@@ -32,7 +30,7 @@ export async function getDeezerSongData(
       artist + " " + title
     )}`
   );
-  const json = await response.json();
+  const json: any = await response.json();
   if (!json.data?.length) {
     throw new Error("Not found");
   }
@@ -56,7 +54,7 @@ async function deezerAPIFetch<T = any>(
   if (!response.ok) {
     throw new Error(response.statusText);
   }
-  const json = await response.json();
+  const json: any = await response.json();
   if (json.error) {
     throw new Error(json.error.message);
   }

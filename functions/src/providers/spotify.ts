@@ -40,7 +40,7 @@ async function getAccessToken(): Promise<string> {
         "=" +
         encodeURIComponent("client_credentials"),
     });
-    const json = await response.json();
+    const json: any = await response.json();
     json.time = time;
     tokenData = json;
     return tokenData?.access_token!;
@@ -70,7 +70,7 @@ export async function getSpotifySongData(
       },
     }
   );
-  const json = await response.json();
+  const json: any = await response.json();
   if (!json.tracks?.items?.length) {
     throw new Error("Not found");
   }

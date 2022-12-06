@@ -8,7 +8,7 @@ import type { ProviderId } from "./providers";
 /**
  * 1. Find source
  * 2. Fetch source data
- * 3. Resolve Spotify songs
+ * 3. Resolve songs using given provider
  * 4. Return result
  */
 export const importUrl = functions.https.onRequest(
@@ -30,7 +30,7 @@ export const importUrl = functions.https.onRequest(
       }
       await source.fetchSourceData();
       token = await source.fetchProviderData(provider);
-    } catch (err) {
+    } catch (err: any) {
       error = err;
     }
 
