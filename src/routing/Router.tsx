@@ -71,7 +71,10 @@ export default () => (
   <NavigationContainer linking={linking}>
     <Stack.Navigator
       initialRouteName={(path || "") as keyof StackParamList}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        cardStyle: { height: "100%" },
+      }}
     >
       <Stack.Screen
         name="Home"
