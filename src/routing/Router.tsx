@@ -1,16 +1,17 @@
 import React from "react";
 import * as Linking from "expo-linking";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, LinkingOptions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { store } from "./store";
-import { t } from "./i18n";
-import { providers, getProvider } from "./providers";
-import HomeScreen from "./screens/HomeScreen";
-import SelectScreen from "./screens/SelectScreen";
-import ImportScreen from "./screens/ImportScreen";
+import { store } from "../store";
+import { t } from "../i18n";
+import { providers, getProvider } from "../providers";
+import HomeScreen from "../screens/HomeScreen";
+import SelectScreen from "../screens/SelectScreen";
+import ImportScreen from "../screens/ImportScreen";
+import { StackParamList } from "./types";
 
-const linking = {
+const linking: LinkingOptions<StackParamList> = {
   enabled: true,
   prefixes: [],
   config: {
@@ -64,12 +65,12 @@ if (path === "spotify/authorize-createplaylist") {
   history.replaceState("", document.title, path);
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<StackParamList>();
 
 export default () => (
   <NavigationContainer linking={linking}>
     <Stack.Navigator
-      initialRouteName={path || ""}
+      initialRouteName={(path || "") as keyof StackParamList}
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen
@@ -86,7 +87,6 @@ export default () => (
         name={"Select"}
         component={SelectScreen}
         options={({ route }) => {
-          // @ts-ignore
           const provider = getProvider(route?.params?.provider);
           return {
             title: t("Importeer Top 2000 stemlijst naar $1", provider.name),
@@ -97,7 +97,6 @@ export default () => (
         name={"Import"}
         component={ImportScreen}
         options={({ route }) => {
-          // @ts-ignore
           const provider = getProvider(route?.params?.provider);
           return {
             title: t("Importeer Top 2000 stemlijst naar $1", provider.name),

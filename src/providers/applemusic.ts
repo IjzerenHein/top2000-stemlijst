@@ -5,11 +5,16 @@ export type AppleMusicAuth = {
   userToken: string;
 };
 
+declare global {
+  class MusicKit {
+    static configure(config: any): any;
+  }
+}
+
 export async function authorizeAppleMusic(
   developerToken: string
 ): Promise<AppleMusicAuth> {
   // Configure
-  // @ts-ignore
   const music = MusicKit.configure({
     developerToken,
     app: {

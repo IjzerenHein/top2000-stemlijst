@@ -1,5 +1,6 @@
-import { useRoute } from "@react-navigation/native";
+import { useRoute, RouteProp } from "@react-navigation/native";
 import { Colors } from "../theme";
+import { StackParamList } from "../routing/types";
 
 export type ProviderId = "spotify" | "applemusic" | "deezer";
 
@@ -38,6 +39,6 @@ export function getProvider(providerId: string) {
 }
 
 export function useMusicProvider() {
-  // @ts-ignore
-  return getProvider(useRoute().params?.provider);
+  const route = useRoute<RouteProp<StackParamList, "Import">>();
+  return getProvider(route.params?.provider);
 }
