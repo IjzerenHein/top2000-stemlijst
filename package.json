@@ -4,7 +4,7 @@
     "tsc": "tsc --noemit",
     "start": "expo start",
     "web": "expo start --web",
-    "build:web": "npx expo export:web",
+    "build": "npx expo export:web",
     "deploy:firestore": "firebase deploy --only firestore"
   },
   "dependencies": {
